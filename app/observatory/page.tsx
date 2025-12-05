@@ -138,7 +138,14 @@ export default function ObservatoryPage() {
           tokensUsed: Math.floor(Math.random() * 1000000 + 500000),
         })
 
-        const points = data.slice(0, 30).map((agent: any, i: number) => {
+        interface AgentData {
+          id: string
+          name: string
+          avatar?: string
+          domain: string
+          [key: string]: unknown
+        }
+        const points = data.slice(0, 30).map((agent: AgentData, i: number) => {
           // Cluster by domain for realistic geography
           const domainClusters: Record<string, { lat: number; lon: number }> = {
             Health: { lat: 40, lon: -100 }, // North America
@@ -164,7 +171,7 @@ export default function ObservatoryPage() {
         })
         setGlobePoints(points)
 
-        const nodes = data.slice(0, 20).map((agent: any, i: number) => {
+        const nodes = data.slice(0, 20).map((agent: AgentData, i: number) => {
           const angle = (i / data.slice(0, 20).length) * Math.PI * 2
           const radius = 200 + Math.random() * 100
           return {

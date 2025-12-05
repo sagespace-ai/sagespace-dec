@@ -31,9 +31,28 @@ interface SavedCircle {
   uses: number
 }
 
+interface Perspective {
+  sage: string
+  avatar: string
+  perspective: string
+  confidence: number
+  vote: "agree" | "consider" | "disagree"
+}
+
+interface Deliberation {
+  conversationId?: string
+  transcript?: Array<{ role: string; name: string; content: string }>
+  final?: string
+  perspectives: Perspective[]
+  consensus: string
+  xpGained: number
+  tokens?: { input: number; output: number }
+  creditsCharged?: number
+}
+
 export default function CouncilPage() {
   const [query, setQuery] = useState("")
-  const [deliberation, setDeliberation] = useState<any>(null)
+  const [deliberation, setDeliberation] = useState<Deliberation | null>(null)
   const [loading, setLoading] = useState(false)
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
   const [selectedSages, setSelectedSages] = useState<string[]>([])
@@ -221,14 +240,14 @@ export default function CouncilPage() {
       })
       const data = await response.json()
 
-      const mockPerspectives = availableSages
+      const mockPerspectives: Perspective[] = availableSages
         .filter((s) => selectedSages.length === 0 || selectedSages.includes(s.id))
         .map((sage) => ({
           sage: sage.name,
           avatar: sage.avatar,
           perspective: generateMockPerspective(sage, query),
           confidence: Math.floor(Math.random() * 20 + 80),
-          vote: Math.random() > 0.3 ? "agree" : "consider",
+          vote: (Math.random() > 0.3 ? "agree" : "consider") as Perspective["vote"],
         }))
 
       setDeliberation({
@@ -265,7 +284,7 @@ export default function CouncilPage() {
     )
   }
 
-  const generateConsensus = (perspectives: any[]) => {
+  const generateConsensus = (perspectives: Perspective[]) => {
     const agreeCount = perspectives.filter((p) => p.vote === "agree").length
     const total = perspectives.length
     const percentage = Math.floor((agreeCount / total) * 100)

@@ -37,12 +37,21 @@ interface SageData {
   tone?: string
 }
 
+interface MessageMetadata {
+  questTitle?: string
+  reward?: string
+  difficulty?: string
+  artifactType?: string
+  shareLink?: string
+  [key: string]: unknown
+}
+
 interface Message {
   role: string
   content: string
   timestamp: Date
   type?: MessageType
-  metadata?: any
+  metadata?: MessageMetadata
 }
 
 export default function PlaygroundPage() {

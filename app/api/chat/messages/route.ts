@@ -184,7 +184,7 @@ export async function GET(request: NextRequest) {
     // Calculate stats
     const userMessages = messages?.filter((m) => m.author_type === "user") || []
     const allBlocks = messages?.flatMap((m) => m.blocks || []) || []
-    const artifacts = allBlocks.filter((b: any) => b.type === "artifact")
+    const artifacts = allBlocks.filter((b): b is ContentBlock => b && typeof b === 'object' && 'type' in b && b.type === "artifact")
 
     const stats: ChatStats = {
       sessionId,

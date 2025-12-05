@@ -131,7 +131,7 @@ async function logRecommendation(userId: string, mode: SageMode, mood: Mood | un
   })
 }
 
-function prioritizeDomains(sages: any[], domains: string[]) {
+function prioritizeDomains<T extends { domain: string }>(sages: T[], domains: string[]): T[] {
   return sages.sort((a, b) => {
     const aScore = domains.includes(a.domain) ? 1 : 0
     const bScore = domains.includes(b.domain) ? 1 : 0

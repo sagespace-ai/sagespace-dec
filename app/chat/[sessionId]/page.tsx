@@ -54,8 +54,17 @@ export default function ChatSessionPage() {
       const data = await response.json()
 
       if (data.messages) {
+        interface MessageFromDB {
+          id: string
+          author_type: string
+          author_id: string
+          created_at: string
+          mode_at_time: string
+          blocks?: ContentBlock[]
+          [key: string]: unknown
+        }
         setMessages(
-          data.messages.map((m: any) => ({
+          data.messages.map((m: MessageFromDB) => ({
             ...m,
             authorType: m.author_type,
             authorId: m.author_id,
