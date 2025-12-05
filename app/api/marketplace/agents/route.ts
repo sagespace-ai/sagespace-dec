@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server"
-import { prisma } from "@/lib/db"
+import { supabase } from "@/lib/db"
 import type { MarketplaceWhereInput } from "@/types"
 
 export async function GET(request: Request) {
@@ -9,18 +9,23 @@ export async function GET(request: Request) {
     const featured = searchParams.get("featured") === "true"
     const trending = searchParams.get("trending") === "true"
 
-    const where: MarketplaceWhereInput = {}
-    if (category) where.category = category
-    if (featured) where.featured = true
-    if (trending) where.trending = true
+    let query = supabase.from("marketplace_agents").select("*")
 
-    const agents = await prisma.marketplaceAgent.findMany({
-      where,
-      orderBy: { createdAt: "desc" },
-      take: 50,
-    })
+    if (category) {
+      query = query.eq("category", category)
+    }
+    if (featured) {
+      query = query.eq("featured", true)
+    }
+    if (trending) {
+      query = query.eq("trending", true)
+    }
 
-    return NextResponse.json({ agents })
+    const { data: agents, error } = await query.order("created_at", { ascending: false }).limit(50)
+
+    if (error) throw error
+
+    return NextResponse.json({ agents: agents || [] })
   } catch (error) {
     console.error("[marketplace] Error fetching agents:", error)
     return NextResponse.json({ error: "Failed to fetch agents" }, { status: 500 })
@@ -35,16 +40,20 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 })
     }
 
-    const agent = await prisma.marketplaceAgent.create({
-      data: {
-        creatorId,
+    const { data: agent, error } = await supabase
+      .from("marketplace_agents")
+      .insert({
+        creator_id: creatorId,
         name,
         description,
         category,
         price,
         config,
-      },
-    })
+      })
+      .select()
+      .single()
+
+    if (error) throw error
 
     return NextResponse.json({ success: true, agent })
   } catch (error) {

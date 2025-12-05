@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server"
 import { generateReferralCode, trackReferralClick } from "@/lib/monetization"
-import { prisma } from "@/lib/db"
+import { supabase } from "@/lib/db"
 
 export async function POST(request: Request) {
   try {
@@ -32,11 +32,14 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: "Missing userId" }, { status: 400 })
     }
 
-    const referrals = await prisma.referral.findMany({
-      where: { referrerId: userId },
-    })
+    const { data: referrals, error } = await supabase
+      .from("referrals")
+      .select("*")
+      .eq("referrer_id", userId)
 
-    return NextResponse.json({ referrals })
+    if (error) throw error
+
+    return NextResponse.json({ referrals: referrals || [] })
   } catch (error) {
     console.error("[referrals] Error fetching referrals:", error)
     return NextResponse.json({ error: "Failed to fetch referrals" }, { status: 500 })

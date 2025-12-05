@@ -3,7 +3,7 @@
 import type React from "react"
 import { createContext, useContext, useState, useEffect } from "react"
 import { createClient } from "@/lib/supabase/client"
-import type { AuthEvent, AuthSession } from "@/types"
+import type { Session } from "@supabase/supabase-js"
 
 interface User {
   id: string
@@ -82,7 +82,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (supabase) {
       const {
         data: { subscription },
-      } = supabase.auth.onAuthStateChange(async (event: AuthEvent, session: AuthSession) => {
+      } = supabase.auth.onAuthStateChange(async (event, session: Session | null) => {
         if (session?.user) {
           const { data: profile } = await supabase!.from("profiles").select("*").eq("id", session.user.id).single()
 

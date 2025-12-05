@@ -59,7 +59,7 @@ export default function UniverseMapPage() {
   const [trendingNearYou, setTrendingNearYou] = useState<any[]>([])
   const [isPanning, setIsPanning] = useState(false)
   const canvasRef = useRef<HTMLDivElement>(null)
-  const animationRef = useRef<number>()
+  const animationRef = useRef<number | undefined>(undefined)
 
   const constellations = {
     "Knowledge & Learning": ["Education", "History", "Science", "Research"],

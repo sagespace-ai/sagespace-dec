@@ -19,7 +19,7 @@ export async function POST(request: Request) {
     await trackEvent("subscription_created", {
       userId,
       tier,
-      subscriptionId: subscription.id,
+      subscriptionId: subscription.userId, // Use userId as subscription identifier
     })
 
     return NextResponse.json({ success: true, subscription })

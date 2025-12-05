@@ -97,26 +97,12 @@ export default function CouncilPage() {
   useEffect(() => {
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase()
-      const allSages = SAGE_TEMPLATES.map((sage) => ({
-        id: sage.id,
-        name: sage.name,
-        avatar: sage.avatar,
-        domain: sage.domain,
-        specialty: sage.role,
-        keywords: [
-          sage.name.toLowerCase(),
-          sage.domain.toLowerCase(),
-          sage.role.toLowerCase(),
-          ...sage.capabilities.map((c) => c.toLowerCase()),
-        ],
-      }))
-
-      const results = allSages.filter(
+      const results = SAGE_TEMPLATES.filter(
         (sage) =>
           sage.name.toLowerCase().includes(query) ||
           sage.domain.toLowerCase().includes(query) ||
-          sage.specialty.toLowerCase().includes(query) ||
-          sage.keywords.some((keyword) => keyword.includes(query)),
+          sage.role.toLowerCase().includes(query) ||
+          sage.capabilities.some((cap) => cap.toLowerCase().includes(query)),
       )
 
       setFilteredSages(results.slice(0, 12)) // Show top 12 results
@@ -556,7 +542,7 @@ export default function CouncilPage() {
                   >
                     <div className="text-4xl mb-2">{sage.avatar}</div>
                     <div className="text-sm font-medium text-white">{sage.name.split(" ")[1] || sage.name}</div>
-                    <div className="text-xs text-slate-400 mt-1">{sage.role || sage.specialty}</div>
+                    <div className="text-xs text-slate-400 mt-1">{sage.role}</div>
                   </button>
                 ))}
               </div>

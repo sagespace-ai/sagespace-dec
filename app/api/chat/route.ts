@@ -9,6 +9,8 @@ import { logEvent } from "@/lib/events"
 import { checkRateLimit, getRateLimitKey } from "@/lib/rate"
 import { z } from "zod"
 import { DEMO_MODE } from "@/lib/demo"
+import type { ChatMessage } from "@/types"
+import type OpenAI from "openai"
 
 const chatSchema = z.object({
   conversationId: z.string().optional(),
@@ -69,9 +71,9 @@ export async function POST(request: NextRequest) {
     }
 
     // Build messages array
-    const messages = [
+    const messages: ChatMessage[] = [
       { role: "system", content: systemPrompt },
-      ...conversation.messages.map((m) => ({
+      ...conversation.messages.map((m: { role: string; content: string; name?: string }) => ({
         role: m.role,
         content: m.content,
         ...(m.name && { name: m.name }),
@@ -87,51 +89,57 @@ export async function POST(request: NextRequest) {
       stream: false,
     })
 
-    const assistantMessage = completion.choices[0]?.message?.content || ""
-    const tokensIn = completion.usage?.prompt_tokens || 0
-    const tokensOut = completion.usage?.completion_tokens || 0
-    const totalTokens = tokensIn + tokensOut
+    // Type guard: since stream is false, this should be ChatCompletion, not Stream
+    if ('choices' in completion && Array.isArray(completion.choices)) {
+      const chatCompletion = completion as OpenAI.ChatCompletion
+      const assistantMessage = chatCompletion.choices[0]?.message?.content || ""
+      const tokensIn = chatCompletion.usage?.prompt_tokens || 0
+      const tokensOut = chatCompletion.usage?.completion_tokens || 0
+      const totalTokens = tokensIn + tokensOut
 
-    // Save assistant message
-    const messageRecord = await addMessage(conversation.id, "assistant", assistantMessage, {
-      tokensIn,
-      tokensOut,
-    })
+      // Save assistant message
+      const messageRecord = await addMessage(conversation.id, "assistant", assistantMessage, {
+        tokensIn,
+        tokensOut,
+      })
 
-    // Calculate and debit credits
-    const creditsRequired = tokensToCredits(totalTokens)
-    const debitResult = await debitCredits(userId, creditsRequired, "chat", {
-      conversationId: conversation.id,
-      tokens: totalTokens,
-    })
-
-    if (!debitResult.success) {
-      // Delete the messages if we couldn't charge
-      return NextResponse.json({ ok: false, error: debitResult.error }, { status: 402 })
-    }
-
-    // Award XP
-    await awardXP(userId, "chat_turn")
-
-    // Log event
-    await logEvent({
-      type: "chat_turn",
-      userId: userId,
-      timestamp: Date.now(),
-      props: { personaId, tokens: totalTokens },
-    })
-
-    return NextResponse.json({
-      ok: true,
-      data: {
+      // Calculate and debit credits
+      const creditsRequired = tokensToCredits(totalTokens)
+      const debitResult = await debitCredits(userId, creditsRequired, "chat", {
         conversationId: conversation.id,
-        messageId: messageRecord.id,
-        assistantMessage,
-        tokens: { input: tokensIn, output: tokensOut },
-        creditsCharged: creditsRequired,
-        artifacts: [],
-      },
-    })
+        tokens: totalTokens,
+      })
+
+      if (!debitResult.success) {
+        // Delete the messages if we couldn't charge
+        return NextResponse.json({ ok: false, error: debitResult.error }, { status: 402 })
+      }
+
+      // Award XP
+      await awardXP(userId, "chat_turn")
+
+      // Log event
+      await logEvent({
+        type: "chat_turn",
+        userId: userId,
+        timestamp: Date.now(),
+        props: { personaId, tokens: totalTokens },
+      })
+
+      return NextResponse.json({
+        ok: true,
+        data: {
+          conversationId: conversation.id,
+          messageId: messageRecord.id,
+          assistantMessage,
+          tokens: { input: tokensIn, output: tokensOut },
+          creditsCharged: creditsRequired,
+          artifacts: [],
+        },
+      })
+    } else {
+      return NextResponse.json({ ok: false, error: "Unexpected response format" }, { status: 500 })
+    }
   } catch (error) {
     console.error("[chat] POST error:", error)
     return NextResponse.json({ ok: false, error: "Failed to process chat" }, { status: 500 })

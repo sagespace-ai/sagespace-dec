@@ -10,6 +10,8 @@ import { logEvent } from "@/lib/events"
 import { checkRateLimit, getRateLimitKey } from "@/lib/rate"
 import { z } from "zod"
 import { getConversation } from "@/lib/conversations" // Declare the getConversation variable
+import type { ChatMessage } from "@/types"
+import type OpenAI from "openai"
 
 const councilSchema = z.object({
   conversationId: z.string().optional(),
@@ -87,7 +89,7 @@ export async function POST(request: NextRequest) {
               ? `\n\nPrevious sage responses:\n${transcript.map((t) => `${t.name}: ${t.content}`).join("\n\n")}`
               : ""
 
-          const messages = [
+          const messages: ChatMessage[] = [
             {
               role: "system",
               content: persona.systemPrompt,
@@ -100,19 +102,34 @@ export async function POST(request: NextRequest) {
 
           const completion = await generateChatCompletion(messages, {
             maxTokens: maxTokensPerSage,
+            stream: false,
           })
 
-          const response = completion.choices[0]?.message?.content || ""
-          const tokensIn = completion.usage?.prompt_tokens || 0
-          const tokensOut = completion.usage?.completion_tokens || 0
+          // Type guard: since stream is false, this should be ChatCompletion
+          if ('choices' in completion && Array.isArray(completion.choices)) {
+            const chatCompletion = completion as OpenAI.ChatCompletion
+            const response = chatCompletion.choices[0]?.message?.content || ""
+            const tokensIn = chatCompletion.usage?.prompt_tokens || 0
+            const tokensOut = chatCompletion.usage?.completion_tokens || 0
 
-          return {
-            role: "sage" as const,
-            name: persona.name,
-            content: response,
-            tokensIn,
-            tokensOut,
+            return {
+              role: "sage" as const,
+              name: persona.name,
+              content: response,
+              tokensIn,
+              tokensOut,
+            }
+          } else {
+            // Fallback for unexpected format
+            return {
+              role: "sage" as const,
+              name: persona.name,
+              content: "",
+              tokensIn: 0,
+              tokensOut: 0,
+            }
           }
+
         }),
       )
 
@@ -125,7 +142,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Final synthesis
-    const synthesisMessages = [
+    const synthesisMessages: ChatMessage[] = [
       {
         role: "system",
         content: "You are a master synthesizer who combines multiple perspectives into a coherent answer.",
@@ -138,54 +155,62 @@ export async function POST(request: NextRequest) {
 
     const synthesis = await generateChatCompletion(synthesisMessages, {
       maxTokens: 500,
+      stream: false,
     })
 
-    const finalAnswer = synthesis.choices[0]?.message?.content || ""
-    totalTokensIn += synthesis.usage?.prompt_tokens || 0
-    totalTokensOut += synthesis.usage?.completion_tokens || 0
+    // Type guard: since stream is false, this should be ChatCompletion
+    if ('choices' in synthesis && Array.isArray(synthesis.choices)) {
+      const chatCompletion = synthesis as OpenAI.ChatCompletion
+      const finalAnswer = chatCompletion.choices[0]?.message?.content || ""
+      totalTokensIn += chatCompletion.usage?.prompt_tokens || 0
+      totalTokensOut += chatCompletion.usage?.completion_tokens || 0
 
-    // Save council response
-    await addMessage(conv.id, "assistant", finalAnswer, {
-      name: "Council Synthesis",
-      tokensIn: totalTokensIn,
-      tokensOut: totalTokensOut,
-    })
+      // Save council response
+      await addMessage(conv.id, "assistant", finalAnswer, {
+        name: "Council Synthesis",
+        tokensIn: totalTokensIn,
+        tokensOut: totalTokensOut,
+      })
 
-    // Calculate and debit credits
-    const totalTokens = totalTokensIn + totalTokensOut
-    const creditsRequired = tokensToCredits(totalTokens)
-    const debitResult = await debitCredits(session.user.id, creditsRequired, "council", {
-      conversationId: conv.id,
-      tokens: totalTokens,
-      personas: personas.length,
-    })
+      // Calculate and debit credits
+      const totalTokens = totalTokensIn + totalTokensOut
+      const creditsRequired = tokensToCredits(totalTokens)
+      const debitResult = await debitCredits(session.user.id, creditsRequired, "council", {
+        conversationId: conv.id,
+        tokens: totalTokens,
+        personas: personas.length,
+      })
 
-    if (!debitResult.success) {
-      return NextResponse.json({ ok: false, error: debitResult.error }, { status: 402 })
+      if (!debitResult.success) {
+        return NextResponse.json({ ok: false, error: debitResult.error }, { status: 402 })
+      }
+
+      // Award XP and badge
+      await awardXP(session.user.id, "council_complete")
+      await awardBadge(session.user.id, "council_complete")
+
+      // Log event
+      await logEvent({
+        type: "council_complete",
+        userId: session.user.id,
+        timestamp: Date.now(),
+        props: { personas: personas.length, rounds, tokens: totalTokens },
+      })
+
+      return NextResponse.json({
+        ok: true,
+        data: {
+          conversationId: conv.id,
+          transcript,
+          final: finalAnswer,
+          tokens: { input: totalTokensIn, output: totalTokensOut },
+          creditsCharged: creditsRequired,
+        },
+      })
+    } else {
+      return NextResponse.json({ ok: false, error: "Unexpected response format" }, { status: 500 })
     }
 
-    // Award XP and badge
-    await awardXP(session.user.id, "council_complete")
-    await awardBadge(session.user.id, "council_complete")
-
-    // Log event
-    await logEvent({
-      type: "council_complete",
-      userId: session.user.id,
-      timestamp: Date.now(),
-      props: { personas: personas.length, rounds, tokens: totalTokens },
-    })
-
-    return NextResponse.json({
-      ok: true,
-      data: {
-        conversationId: conv.id,
-        transcript,
-        final: finalAnswer,
-        tokens: { input: totalTokensIn, output: totalTokensOut },
-        creditsCharged: creditsRequired,
-      },
-    })
   } catch (error) {
     console.error("[council] POST error:", error)
     return NextResponse.json({ ok: false, error: "Failed to process council" }, { status: 500 })

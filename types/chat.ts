@@ -84,3 +84,10 @@ export interface ChatMessage {
   modeAtTime: string
   blocks: ContentBlock[]
 }
+
+export interface ChatStats {
+  sessionId: string
+  messagesSent: number
+  xpEarned: number
+  artifactsCollected: number
+}
