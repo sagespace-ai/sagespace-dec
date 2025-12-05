@@ -1,6 +1,6 @@
 {
   "name": "sagespace-v1",
-  "version": "0.1.0",
+  "version": "1.0",
   "private": true,
   "scripts": {
     "prebuild": "npm run type-check",
