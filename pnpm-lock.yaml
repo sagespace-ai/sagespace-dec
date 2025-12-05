@@ -4,6 +4,10 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+overrides:
+  '@prisma/client': 6.2.0
+  prisma: 6.2.0
+
 importers:
 
   .:
@@ -13,7 +17,7 @@ importers:
         version: 0.34.3(nodemailer@7.0.10)
       '@auth/prisma-adapter':
         specifier: ^2.7.5
-        version: 2.8.0(@prisma/client@7.0.0(prisma@6.2.0)(typescript@5.0.2))(nodemailer@7.0.10)
+        version: 2.8.0(@prisma/client@6.2.0(prisma@6.2.0))(nodemailer@7.0.10)
       '@aws-sdk/client-s3':
         specifier: latest
         version: 3.936.0
@@ -27,8 +31,8 @@ importers:
         specifier: latest
         version: 1.56.1
       '@prisma/client':
-        specifier: latest
-        version: 7.0.0(prisma@6.2.0)(typescript@5.0.2)
+        specifier: 6.2.0
+        version: 6.2.0(prisma@6.2.0)
       '@radix-ui/react-accordion':
         specifier: latest
         version: 1.2.12(@types/react-dom@19.0.0)(@types/react@19.0.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
@@ -226,7 +230,7 @@ importers:
         specifier: ^8.5
         version: 8.5.0
       prisma:
-        specifier: ^6.2.0
+        specifier: 6.2.0
         version: 6.2.0
       tailwindcss:
         specifier: ^4.1.9
@@ -298,7 +302,7 @@ packages:
   '@auth/prisma-adapter@2.8.0':
     resolution: {integrity: sha512-g0Bmq3l5xUDyBBiDgm/y3Zqb582CnRHzFqbloV7scrLia5AbVC0xy+ntn+CQCAWW9ibpwiqJrQKKboIWN1oGqw==}
     peerDependencies:
-      '@prisma/client': '>=2.26.0 || >=3 || >=4 || >=5 || >=6'
+      '@prisma/client': 6.2.0
 
   '@aws-crypto/crc32@5.2.0':
     resolution: {integrity: sha512-nLbCWqQNgUiwwtFsen1AdzAtvuLRsQS8rYgMuxCrdKf9kOssamGLuPwyTY9wyYblNr9+1XM8v6zoDTPPSIeANg==}
@@ -858,19 +862,13 @@ packages:
     engines: {node: '>=18'}
     hasBin: true
 
-  '@prisma/client-runtime-utils@7.0.0':
-    resolution: {integrity: sha512-PAiFgMBPrLSaakBwUpML5NevipuKSL3rtNr8pZ8CZ3OBXo0BFcdeGcBIKw/CxJP6H4GNa4+l5bzJPrk8Iq6tDw==}
-
-  '@prisma/client@7.0.0':
-    resolution: {integrity: sha512-FM1NtJezl0zH3CybLxcbJwShJt7xFGSRg+1tGhy3sCB8goUDnxnBR+RC/P35EAW8gjkzx7kgz7bvb0MerY2VSw==}
-    engines: {node: ^20.19 || ^22.12 || ^24.0}
+  '@prisma/client@6.2.0':
+    resolution: {integrity: sha512-tmEgej4OR+Wqk8MwZQcu58JzA1iFPmi/z7VPEmjTuTIQDLqHQZ6+MDRLL4wgNJXJkMHUKD9yMD5AkwYH0/0hKA==}
+    engines: {node: '>=18.18'}
     peerDependencies:
-      prisma: '*'
-      typescript: '>=5.4.0'
+      prisma: 6.2.0
     peerDependenciesMeta:
       prisma:
-        optional: true
-      typescript:
         optional: true
 
   '@prisma/debug@6.2.0':
@@ -2734,10 +2732,10 @@ snapshots:
     optionalDependencies:
       nodemailer: 7.0.10
 
-  '@auth/prisma-adapter@2.8.0(@prisma/client@7.0.0(prisma@6.2.0)(typescript@5.0.2))(nodemailer@7.0.10)':
+  '@auth/prisma-adapter@2.8.0(@prisma/client@6.2.0(prisma@6.2.0))(nodemailer@7.0.10)':
     dependencies:
       '@auth/core': 0.38.0(nodemailer@7.0.10)
-      '@prisma/client': 7.0.0(prisma@6.2.0)(typescript@5.0.2)
+      '@prisma/client': 6.2.0(prisma@6.2.0)
     transitivePeerDependencies:
       - '@simplewebauthn/browser'
       - '@simplewebauthn/server'
@@ -3491,14 +3489,9 @@ snapshots:
     dependencies:
       playwright: 1.56.1
 
-  '@prisma/client-runtime-utils@7.0.0': {}
-
-  '@prisma/client@7.0.0(prisma@6.2.0)(typescript@5.0.2)':
-    dependencies:
-      '@prisma/client-runtime-utils': 7.0.0
+  '@prisma/client@6.2.0(prisma@6.2.0)':
     optionalDependencies:
       prisma: 6.2.0
-      typescript: 5.0.2
 
   '@prisma/debug@6.2.0': {}
 
