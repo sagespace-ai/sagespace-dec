@@ -1094,10 +1094,16 @@ export default function PlaygroundPage() {
                                             </div>
                                           </div>
                                           <div className="flex gap-2">
-                                            <button className="flex-1 py-2 bg-purple-500/20 hover:bg-purple-500/30 border border-purple-500/50 rounded-lg text-sm transition-all">
+                                            <button
+                                              onClick={() => handleViewArtifact(artifact.id, artifact.name)}
+                                              className="flex-1 py-2 bg-purple-500/20 hover:bg-purple-500/30 border border-purple-500/50 rounded-lg text-sm transition-all"
+                                            >
                                               View Artifact
                                             </button>
-                                            <button className="flex-1 py-2 bg-cyan-500/20 hover:bg-cyan-500/30 border border-cyan-500/50 rounded-lg text-sm transition-all">
+                                            <button
+                                              onClick={() => handleShareArtifact(artifact.id)}
+                                              className="flex-1 py-2 bg-cyan-500/20 hover:bg-cyan-500/30 border border-cyan-500/50 rounded-lg text-sm transition-all"
+                                            >
                                               Share
                                             </button>
                                           </div>
@@ -1117,10 +1123,22 @@ export default function PlaygroundPage() {
                                         </div>
                                       </div>
                                       <div className="flex gap-2">
-                                        <button className="flex-1 py-2 bg-purple-500/20 hover:bg-purple-500/30 border border-purple-500/50 rounded-lg text-sm transition-all">
+                                        <button
+                                          onClick={() => {
+                                            const artifactId = msg.metadata?.shareLink?.split("/").pop() || `artifact-${Date.now()}`
+                                            handleViewArtifact(artifactId, msg.metadata?.artifactType as string || "Artifact")
+                                          }}
+                                          className="flex-1 py-2 bg-purple-500/20 hover:bg-purple-500/30 border border-purple-500/50 rounded-lg text-sm transition-all"
+                                        >
                                           View Artifact
                                         </button>
-                                        <button className="flex-1 py-2 bg-cyan-500/20 hover:bg-cyan-500/30 border border-cyan-500/50 rounded-lg text-sm transition-all">
+                                        <button
+                                          onClick={() => {
+                                            const artifactId = msg.metadata?.shareLink?.split("/").pop() || `artifact-${Date.now()}`
+                                            handleShareArtifact(artifactId)
+                                          }}
+                                          className="flex-1 py-2 bg-cyan-500/20 hover:bg-cyan-500/30 border border-cyan-500/50 rounded-lg text-sm transition-all"
+                                        >
                                           Share
                                         </button>
                                       </div>
