@@ -23,6 +23,16 @@ import {
   UserIcon,
   SparklesIcon, // Import SparklesIcon
 } from "@/components/icons"
+import {
+  uploadImage,
+  generateImage,
+  startAudioRecording,
+  stopAudioRecording,
+  createQuest,
+  type QuestCreationResult,
+} from "@/lib/playground/multimodal"
+import { CodeEditorModal } from "@/components/playground/CodeEditorModal"
+import { QuestCreatorModal } from "@/components/playground/QuestCreatorModal"
 
 type MessageType = "text" | "image" | "video" | "audio" | "code" | "artifact" | "quest"
 
@@ -92,6 +102,12 @@ export default function PlaygroundPage() {
 
   const [sageMode, setSageMode] = useState<SageMode>("single")
 
+  // Multimodal state
+  const [showCodeEditor, setShowCodeEditor] = useState(false)
+  const [showQuestCreator, setShowQuestCreator] = useState(false)
+  const [isRecordingAudio, setIsRecordingAudio] = useState(false)
+  const [pendingImage, setPendingImage] = useState<File | null>(null)
+
   // mood, isDiscovering, showMoodSelector, hologramActive, particles, recentSages, trendingSages
   // showSageBrowser, allSages, sageSearchQuery, quickSearchQuery, loadingAllSages
   // isSpinning, slotPositions, spinSpeed, spinMode, numSlots, sageOMaticPage
@@ -99,6 +115,10 @@ export default function PlaygroundPage() {
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const hologramRef = useRef<HTMLDivElement>(null) // Keep hologramRef for potential future use or if it's still referenced elsewhere
   const router = useRouter()
+  
+  // Audio recording refs
+  const audioRecorderRef = useRef<MediaRecorder | null>(null)
+  const audioStreamRef = useRef<MediaStream | null>(null)
 
   const sages: SageData[] = [
     {
@@ -273,6 +293,107 @@ export default function PlaygroundPage() {
     setShowShareModal(false)
   }
 
+  // Multimodal button handlers
+  const handleImageClick = () => {
+    const input = document.createElement("input")
+    input.type = "file"
+    input.accept = "image/*"
+    input.onchange = async (e) => {
+      const file = (e.target as HTMLInputElement).files?.[0]
+      if (file) {
+        try {
+          setPendingImage(file)
+          const result = await uploadImage(file)
+          // Preview the image in input or attach to next message
+          setInput((prev) => `${prev} [Image: ${file.name}]`.trim())
+          console.log("[playground] Image uploaded:", result.url)
+        } catch (error) {
+          console.error("[playground] Image upload failed:", error)
+          setError("Failed to upload image. Please try again.")
+        } finally {
+          setPendingImage(null)
+        }
+      }
+    }
+    input.click()
+  }
+
+  const handleCodeClick = () => {
+    setShowCodeEditor(true)
+  }
+
+  const handleCodeSave = (code: string, language: string) => {
+    setInput((prev) => `${prev}\n\`\`\`${language}\n${code}\n\`\`\``.trim())
+    console.log("[playground] Code saved:", { code, language })
+  }
+
+  const handleQuestCreate = async (quest: QuestCreationResult) => {
+    try {
+      const questId = await createQuest(quest)
+      setInput((prev) => `${prev} [Quest: ${quest.title}]`.trim())
+      console.log("[playground] Quest created:", questId)
+    } catch (error) {
+      console.error("[playground] Quest creation failed:", error)
+      setError("Failed to create quest. Please try again.")
+    }
+  }
+
+  const handleAudioClick = async () => {
+    if (isRecordingAudio) {
+      // Stop recording
+      if (audioRecorderRef.current && audioStreamRef.current) {
+        try {
+          const result = await stopAudioRecording(audioRecorderRef.current, audioStreamRef.current)
+          setInput((prev) => `${prev} [Audio recorded]`.trim())
+          console.log("[playground] Audio recorded:", result.url)
+        } catch (error) {
+          console.error("[playground] Audio recording failed:", error)
+          setError("Failed to record audio. Please try again.")
+        } finally {
+          setIsRecordingAudio(false)
+          audioRecorderRef.current = null
+          audioStreamRef.current = null
+        }
+      }
+    } else {
+      // Start recording
+      try {
+        const { recorder, stream } = await startAudioRecording()
+        audioRecorderRef.current = recorder
+        audioStreamRef.current = stream
+        recorder.start()
+        setIsRecordingAudio(true)
+      } catch (error) {
+        console.error("[playground] Failed to start recording:", error)
+        setError(error instanceof Error ? error.message : "Failed to start audio recording.")
+      }
+    }
+  }
+
+  const handleQuestClick = () => {
+    setShowQuestCreator(true)
+  }
+
+  const handleReset = () => {
+    setLoading(false)
+    setError(null)
+    // Optionally clear input
+    // setInput("")
+  }
+
+  // Loading timeout effect
+  useEffect(() => {
+    if (loading) {
+      const timeout = setTimeout(() => {
+        console.warn("[playground] Loading timeout - resetting state")
+        setLoading(false)
+        setError("Request timed out. Please try again.")
+      }, 30000) // 30 second timeout
+
+      return () => clearTimeout(timeout)
+    }
+  }, [loading])
+
   const sendMessage = async () => {
     if (!input.trim() || loading) return
 
@@ -378,9 +499,11 @@ export default function PlaygroundPage() {
     } catch (error) {
       console.error("Chat error:", error)
       setError("Network error. Please check your connection and try again.")
-      setLoading(false)
       // Remove the user message we optimistically added
       setMessages((prev) => prev.slice(0, -1))
+    } finally {
+      // Guarantee loading is reset
+      setLoading(false)
     }
   }
 
@@ -787,26 +910,34 @@ export default function PlaygroundPage() {
                   <div className="flex items-center gap-2 mb-3 pb-3 border-b border-purple-500/20">
                     <div className="text-xs text-slate-400 mr-2">Add:</div>
                     <button
+                      onClick={handleImageClick}
+                      disabled={loading}
                       title="Upload or generate an image"
-                      className="px-3 py-1.5 bg-purple-500/20 hover:bg-purple-500/30 border border-purple-500/50 rounded-lg text-xs text-purple-300 transition-all hover:scale-105 flex items-center gap-1"
+                      className="px-3 py-1.5 bg-purple-500/20 hover:bg-purple-500/30 border border-purple-500/50 rounded-lg text-xs text-purple-300 transition-all hover:scale-105 flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       🖼️ Image
                     </button>
                     <button
+                      onClick={handleCodeClick}
+                      disabled={loading}
                       title="Insert code snippet"
-                      className="px-3 py-1.5 bg-cyan-500/20 hover:bg-cyan-500/30 border border-cyan-500/50 rounded-lg text-xs text-cyan-300 transition-all hover:scale-105 flex items-center gap-1"
+                      className="px-3 py-1.5 bg-cyan-500/20 hover:bg-cyan-500/30 border border-cyan-500/50 rounded-lg text-xs text-cyan-300 transition-all hover:scale-105 flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       📝 Code
                     </button>
                     <button
-                      title="Record or upload audio"
-                      className="px-3 py-1.5 bg-pink-500/20 hover:bg-pink-500/30 border border-pink-500/50 rounded-lg text-xs text-pink-300 transition-all hover:scale-105 flex items-center gap-1"
+                      onClick={handleAudioClick}
+                      disabled={loading}
+                      title={isRecordingAudio ? "Stop recording" : "Record or upload audio"}
+                      className={`px-3 py-1.5 bg-pink-500/20 hover:bg-pink-500/30 border border-pink-500/50 rounded-lg text-xs text-pink-300 transition-all hover:scale-105 flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed ${isRecordingAudio ? "animate-pulse" : ""}`}
                     >
-                      🎵 Audio
+                      {isRecordingAudio ? "⏹️ Stop" : "🎵 Audio"}
                     </button>
                     <button
+                      onClick={handleQuestClick}
+                      disabled={loading}
                       title="Create a learning quest"
-                      className="px-3 py-1.5 bg-yellow-500/20 hover:bg-yellow-500/30 border border-yellow-500/50 rounded-lg text-xs text-yellow-300 transition-all hover:scale-105 flex items-center gap-1"
+                      className="px-3 py-1.5 bg-yellow-500/20 hover:bg-yellow-500/30 border border-yellow-500/50 rounded-lg text-xs text-yellow-300 transition-all hover:scale-105 flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       🎯 Quest
                     </button>
@@ -823,29 +954,53 @@ export default function PlaygroundPage() {
                           sendMessage()
                         }
                       }}
-                      placeholder={`Ask ${sageMode === "single" ? selectedSage : "your sages"} anything...`}
-                      className="flex-1 bg-slate-800/80 border-2 border-slate-600 focus:border-cyan-500 text-white placeholder:text-slate-500 rounded-xl px-4 py-3 transition-all"
+                      placeholder={
+                        loading
+                          ? "Waiting for Sage response..."
+                          : `Ask ${sageMode === "single" ? selectedSage : "your sages"} anything...`
+                      }
+                      className={`flex-1 bg-slate-800/80 border-2 border-slate-600 focus:border-cyan-500 text-white placeholder:text-slate-500 rounded-xl px-4 py-3 transition-all ${
+                        loading ? "opacity-50 cursor-wait" : ""
+                      }`}
                       disabled={loading}
                     />
                     <Button
                       onClick={sendMessage}
                       disabled={loading || !input.trim()}
-                      className="bg-gradient-to-r from-cyan-500 to-purple-500 hover:from-cyan-400 hover:to-purple-400 border-0 shadow-lg shadow-purple-500/50 px-6 rounded-xl transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:hover:scale-100"
+                      className="bg-gradient-to-r from-cyan-500 to-purple-500 hover:from-cyan-400 hover:to-purple-400 border-0 shadow-lg shadow-purple-500/50 px-6 rounded-xl transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:hover:scale-100 relative"
                     >
-                  <SendIcon className="w-5 h-5" />
-                </Button>
-              </div>
-              {error && (
-                <div className="mt-3 p-3 bg-red-500/20 border border-red-500/50 rounded-lg text-red-300 text-sm flex items-center justify-between">
-                  <span>{error}</span>
-                  <button
-                    onClick={() => setError(null)}
-                    className="ml-2 text-red-400 hover:text-red-300"
-                  >
-                    <XIcon className="w-4 h-4" />
-                  </button>
-                </div>
-              )}
+                      {loading ? (
+                        <div className="flex items-center gap-2">
+                          <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                          <span className="text-xs">Thinking...</span>
+                        </div>
+                      ) : (
+                        <SendIcon className="w-5 h-5" />
+                      )}
+                    </Button>
+                    {(error || loading) && (
+                      <Button
+                        onClick={handleReset}
+                        variant="ghost"
+                        size="sm"
+                        className="ml-2 text-slate-400 hover:text-slate-300 text-xs"
+                        title="Reset/Cancel"
+                      >
+                        {loading ? "Cancel" : "Clear"}
+                      </Button>
+                    )}
+                  </div>
+                  {error && (
+                    <div className="mt-3 p-3 bg-red-500/20 border border-red-500/50 rounded-lg text-red-300 text-sm flex items-center justify-between">
+                      <span>{error}</span>
+                      <button
+                        onClick={() => setError(null)}
+                        className="ml-2 text-red-400 hover:text-red-300"
+                      >
+                        <XIcon className="w-4 h-4" />
+                      </button>
+                    </div>
+                  )}
               <div className="flex items-center justify-between mt-3 text-xs text-slate-400">
                     <div>Press Enter to send • Shift+Enter for new line</div>
                     <div className="flex items-center gap-2 text-yellow-400">
