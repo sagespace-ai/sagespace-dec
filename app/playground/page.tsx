@@ -1336,13 +1336,21 @@ export default function PlaygroundPage() {
                     )}
                   </div>
                   {error && (
-                    <div className="mt-3 p-3 bg-red-500/20 border border-red-500/50 rounded-lg text-red-300 text-sm flex items-center justify-between">
-                      <span>{error}</span>
+                    <div className="mt-3 p-3 bg-red-500/20 border border-red-500/50 rounded-lg text-red-300 text-sm">
+                      <div className="flex items-center justify-between mb-2">
+                        <span>{error}</span>
+                        <button
+                          onClick={() => setError(null)}
+                          className="ml-2 text-red-400 hover:text-red-300"
+                        >
+                          <XIcon className="w-4 h-4" />
+                        </button>
+                      </div>
                       <button
-                        onClick={() => setError(null)}
-                        className="ml-2 text-red-400 hover:text-red-300"
+                        onClick={handleRetry}
+                        className="text-xs bg-red-500/30 hover:bg-red-500/40 px-3 py-1 rounded border border-red-500/50 transition-colors"
                       >
-                        <XIcon className="w-4 h-4" />
+                        Retry
                       </button>
                     </div>
                   )}
