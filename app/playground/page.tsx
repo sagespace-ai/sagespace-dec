@@ -229,11 +229,32 @@ export default function PlaygroundPage() {
     }
   }, [currentConversationId])
 
-  // Load conversation ID from localStorage on mount
+  // Load conversation ID and messages from localStorage on mount
   useEffect(() => {
     const savedConversationId = localStorage.getItem("playground_conversation_id")
     if (savedConversationId) {
       setCurrentConversationId(savedConversationId)
+      // Load previous messages from the conversation
+      const loadConversationHistory = async () => {
+        try {
+          const response = await fetch(`/api/conversations/${savedConversationId}`)
+          const data = await response.json()
+          if (data.ok && data.conversation?.messages) {
+            // Convert conversation messages to playground message format
+            const loadedMessages: Message[] = data.conversation.messages.map((m: { role: string; content: string; created_at: string }) => ({
+              role: m.role,
+              content: m.content,
+              timestamp: new Date(m.created_at),
+            }))
+            setMessages(loadedMessages)
+            showInfo(`Loaded ${loadedMessages.length} previous messages`, 2000)
+          }
+        } catch (error) {
+          console.error("[playground] Failed to load conversation history:", error)
+          // Don't show error to user, just continue with empty messages
+        }
+      }
+      loadConversationHistory()
     }
   }, [])
 
