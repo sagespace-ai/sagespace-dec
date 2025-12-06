@@ -368,6 +368,22 @@ export default function PlaygroundPage() {
     }
   }
 
+  const handleViewArtifact = (artifactId: string, artifactName: string) => {
+    const artifactUrl = `/artifacts/${artifactId}`
+    window.open(artifactUrl, "_blank")
+    showInfo(`Opening artifact "${artifactName}"...`, 2000)
+  }
+
+  const handleShareArtifact = async (artifactId: string) => {
+    try {
+      const shareUrl = `${window.location.origin}/artifacts/${artifactId}`
+      await navigator.clipboard.writeText(shareUrl)
+      showSuccess("Artifact link copied to clipboard!", 3000)
+    } catch (error) {
+      showError("Failed to copy link")
+    }
+  }
+
   const handleAcceptQuest = async (questId: string, questTitle: string, rewardXp: number = 100) => {
     try {
       const response = await fetch("/api/quests/accept", {
