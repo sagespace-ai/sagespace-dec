@@ -122,37 +122,7 @@ export function getPersonalizedStarterConversations(
   return shuffled.slice(0, maxCount)
 }
 
-/**
- * Get user profile from Supabase (or return null if not available)
- */
-export async function getUserProfile(userId: string): Promise<UserProfile | null> {
-  try {
-    const { createClient } = await import("@/lib/supabase/server")
-    const supabase = await createClient()
-    
-    const { data: profile } = await supabase
-      .from("profiles")
-      .select("id, name, email, avatar_url")
-      .eq("id", userId)
-      .single()
-
-    if (!profile) return null
-
-    // For now, we'll need to add profession/interests/goals to the profiles table
-    // For MVP, we can infer from existing data or use defaults
-    return {
-      id: profile.id,
-      name: profile.name || undefined,
-      email: profile.email || undefined,
-      avatarUrl: profile.avatar_url || undefined,
-      // TODO: Add profession, interests, goals fields to profiles table
-      profession: undefined,
-      interests: undefined,
-      goals: undefined,
-    }
-  } catch (error) {
-    console.error("[personalization] Error fetching user profile:", error)
-    return null
-  }
-}
+// NOTE: getUserProfile has been moved to lib/personalization-server.ts
+// to avoid importing server-only code (@/lib/supabase/server) in client components.
+// Import it from lib/personalization-server.ts if you need it in server components or API routes.
 

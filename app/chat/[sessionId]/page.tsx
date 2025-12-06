@@ -11,6 +11,7 @@ import type { ChatSession, ChatParticipant } from "@/types/sage"
 import { SAGE_TEMPLATES } from "@/lib/sage-templates"
 import { getPersonalizedStarterConversations } from "@/lib/personalization"
 import type { StarterConversation } from "@/lib/sage-templates"
+import type { UserProfile } from "@/types/user"
 import {
   SendIcon,
   ZapIcon,
