@@ -55,9 +55,17 @@ export async function POST(request: NextRequest) {
     // Get or create conversation
     let conversation
     if (conversationId) {
-      conversation = await getConversation(conversationId, userId)
-      if (!conversation) {
-        return NextResponse.json({ ok: false, error: "Conversation not found" }, { status: 404 })
+      try {
+        conversation = await getConversation(conversationId, userId)
+        if (!conversation) {
+          // Conversation doesn't exist, create a new one instead of failing
+          console.warn(`[chat] Conversation ${conversationId} not found for user ${userId}, creating new one`)
+          conversation = await createConversation(userId, personaId)
+        }
+      } catch (error) {
+        // If there's an error fetching, create a new conversation
+        console.error(`[chat] Error fetching conversation ${conversationId}:`, error)
+        conversation = await createConversation(userId, personaId)
       }
     } else {
       conversation = await createConversation(userId, personaId)

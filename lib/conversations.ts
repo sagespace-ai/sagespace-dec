@@ -41,7 +41,11 @@ export async function getConversation(conversationId: string, userId: string) {
     .eq("user_id", userId)
     .single()
 
-  if (error) throw error
+  // If conversation doesn't exist or there's an error, return null instead of throwing
+  if (error || !conversation) {
+    console.warn(`[conversations] Conversation ${conversationId} not found for user ${userId}`)
+    return null
+  }
 
   // Sort messages by created_at
   if (conversation?.messages) {
