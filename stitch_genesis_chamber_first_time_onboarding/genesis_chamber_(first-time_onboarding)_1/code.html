@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Genesis Chamber - SageSpace Onboarding</title>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+<script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            primary: "#000000",
+            "background-light": "#FFFFFF",
+            "background-dark": "#111827",
+            "card-light": "#F9FAFB",
+            "card-dark": "#1F2937",
+            "border-light": "#E5E7EB",
+            "border-dark": "#374151",
+          },
+          fontFamily: {
+            display: ["Roboto", "sans-serif"],
+          },
+          borderRadius: {
+            DEFAULT: "0.5rem",
+            lg: "0.75rem",
+          },
+          boxShadow: {
+            'cinematic': '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+            'cinematic-dark': '0 10px 15px -3px rgba(0, 0, 0, 0.2), 0 4px 6px -2px rgba(0, 0, 0, 0.1)',
+          }
+        },
+      },
+    };
+  </script>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-gray-900 dark:text-gray-100 min-h-screen flex items-center justify-center p-4 sm:p-6 lg:p-8">
+<main class="w-full max-w-5xl mx-auto">
+<div class="text-center mb-12">
+<h1 class="text-4xl sm:text-5xl font-bold text-gray-900 dark:text-white mb-2 tracking-tight">Genesis Chamber</h1>
+<p class="text-lg sm:text-xl text-gray-600 dark:text-gray-400">A few questions to shape your universe.</p>
+</div>
+<div class="space-y-10">
+<div class="bg-card-light dark:bg-card-dark rounded-lg p-6 sm:p-8 shadow-cinematic dark:shadow-cinematic-dark">
+<h2 class="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-6 text-center">What do you seek right now?</h2>
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+<button class="flex flex-col items-center justify-center p-4 text-center border border-border-light dark:border-border-dark rounded-lg bg-background-light dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-200 ring-2 ring-primary shadow-sm">
+<span class="material-icons-outlined text-3xl mb-2 text-gray-700 dark:text-gray-300">school</span>
+<span class="font-medium text-base">Learn</span>
+</button>
+<button class="flex flex-col items-center justify-center p-4 text-center border border-border-light dark:border-border-dark rounded-lg bg-background-light dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-200 focus:ring-2 focus:ring-primary focus:ring-opacity-50 shadow-sm">
+<span class="material-icons-outlined text-3xl mb-2 text-gray-700 dark:text-gray-300">construction</span>
+<span class="font-medium text-base">Build</span>
+</button>
+<button class="flex flex-col items-center justify-center p-4 text-center border border-border-light dark:border-border-dark rounded-lg bg-background-light dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-200 focus:ring-2 focus:ring-primary focus:ring-opacity-50 shadow-sm">
+<span class="material-icons-outlined text-3xl mb-2 text-gray-700 dark:text-gray-300">healing</span>
+<span class="font-medium text-base">Heal</span>
+</button>
+<button class="flex flex-col items-center justify-center p-4 text-center border border-border-light dark:border-border-dark rounded-lg bg-background-light dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-200 focus:ring-2 focus:ring-primary focus:ring-opacity-50 shadow-sm">
+<span class="material-icons-outlined text-3xl mb-2 text-gray-700 dark:text-gray-300">explore</span>
+<span class="font-medium text-base">Explore</span>
+</button>
+</div>
+</div>
+<div class="bg-card-light dark:bg-card-dark rounded-lg p-6 sm:p-8 shadow-cinematic dark:shadow-cinematic-dark">
+<h2 class="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-6 text-center">What shapes your curiosity?</h2>
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+<button class="flex flex-col items-center justify-center p-4 text-center border border-border-light dark:border-border-dark rounded-lg bg-background-light dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-200 focus:ring-2 focus:ring-primary focus:ring-opacity-50 shadow-sm">
+<span class="material-icons-outlined text-3xl mb-2 text-gray-700 dark:text-gray-300">visibility</span>
+<span class="font-medium text-base">Visual</span>
+</button>
+<button class="flex flex-col items-center justify-center p-4 text-center border border-border-light dark:border-border-dark rounded-lg bg-background-light dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-200 ring-2 ring-primary shadow-sm">
+<span class="material-icons-outlined text-3xl mb-2 text-gray-700 dark:text-gray-300">calculate</span>
+<span class="font-medium text-base">Logical</span>
+</button>
+<button class="flex flex-col items-center justify-center p-4 text-center border border-border-light dark:border-border-dark rounded-lg bg-background-light dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-200 focus:ring-2 focus:ring-primary focus:ring-opacity-50 shadow-sm">
+<span class="material-icons-outlined text-3xl mb-2 text-gray-700 dark:text-gray-300">music_note</span>
+<span class="font-medium text-base">Musical</span>
+</button>
+<button class="flex flex-col items-center justify-center p-4 text-center border border-border-light dark:border-border-dark rounded-lg bg-background-light dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-200 focus:ring-2 focus:ring-primary focus:ring-opacity-50 shadow-sm">
+<span class="material-icons-outlined text-3xl mb-2 text-gray-700 dark:text-gray-300">emoji_events</span>
+<span class="font-medium text-base">Strategic</span>
+</button>
+</div>
+</div>
+<div class="bg-card-light dark:bg-card-dark rounded-lg p-6 sm:p-8 shadow-cinematic dark:shadow-cinematic-dark">
+<h2 class="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-6 text-center">Do you create for yourself or for the world?</h2>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-md mx-auto">
+<button class="flex items-center justify-center p-4 text-center border border-border-light dark:border-border-dark rounded-lg bg-background-light dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-200 focus:ring-2 focus:ring-primary focus:ring-opacity-50 shadow-sm">
+<span class="material-icons-outlined text-2xl mr-3 text-gray-700 dark:text-gray-300">lock</span>
+<span class="font-medium text-base">Private</span>
+</button>
+<button class="flex items-center justify-center p-4 text-center border border-border-light dark:border-border-dark rounded-lg bg-background-light dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-200 ring-2 ring-primary shadow-sm">
+<span class="material-icons-outlined text-2xl mr-3 text-gray-700 dark:text-gray-300">public</span>
+<span class="font-medium text-base">Public</span>
+</button>
+</div>
+</div>
+</div>
+<div class="mt-12 pt-6 border-t border-border-light dark:border-border-dark">
+<button class="w-full bg-primary text-white py-3 px-6 rounded-lg text-lg font-semibold hover:opacity-90 transition-opacity">Launch My Universe</button>
+</div>
+</main>
+
+</body></html>

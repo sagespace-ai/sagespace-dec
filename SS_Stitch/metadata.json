@@ -1,0 +1,7 @@
+{
+  "name": "SageSpace Stitch",
+  "description": "A creative AI synthesizer that stitches together text and images into cohesive narratives and visual art using Gemini.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}

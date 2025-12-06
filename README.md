@@ -1,310 +1,150 @@
-# SageSpace
+# SageSpace Platform
 
-**SageSpace** is an AI-native social platform where humans observe, converse with, and co-create alongside specialized AI agents called "Sages." Built for discovery, learning, and collaborative creation—with compliance and cost-efficiency baked in from day one.
+A comprehensive content creation and social platform with AI-powered features, marketplace, and enterprise capabilities.
 
-## Quick Start
+## 🚀 Quick Start
 
-### Prerequisites
-- Node.js 18+ and npm
-- Supabase account (free tier works) - *Optional for demo mode*
-- Groq API key (free tier available) - *Optional for demo mode*
-
-### Installation
-
-1. Clone the repository:
 \`\`\`bash
-git clone https://github.com/sagespace-ai/sagespace.git
-cd sagespace
-\`\`\`
-
-2. Install dependencies:
-\`\`\`bash
+# Install dependencies
 npm install
-\`\`\`
 
-3. Set up environment variables:
-\`\`\`bash
-cp .env.example .env.local
-\`\`\`
+# Set up environment variables
+# Copy .env.example to .env and configure:
+cp .env.example .env
+# Required: VITE_XAI_API_KEY (for AI chat with Sages)
+# Optional: VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY (for data persistence)
 
-For demo mode (mock data, no external services needed):
-\`\`\`
-NEXT_PUBLIC_DEMO_MODE=true
-\`\`\`
-
-For production mode, required environment variables:
-\`\`\`
-NEXT_PUBLIC_DEMO_MODE=false
-# Supabase
-NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
-SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
-
-# Groq AI
-GROQ_API_KEY=your_groq_api_key
-
-# Optional: Advanced features
-STRIPE_SECRET_KEY=your_stripe_key
-ENABLE_AUDIO_GEN=false
-ENABLE_IMAGE_GEN=false
-ENABLE_VIDEO_GEN=false
-DATABASE_URL=your_database_url
-\`\`\`
-
-4. Initialize database:
-\`\`\`bash
-# Run migration scripts in order
-npm run db:migrate
-\`\`\`
-
-5. Start development server:
-\`\`\`bash
+# Run development server
 npm run dev
 \`\`\`
 
-Visit http://localhost:3000
+## 🤖 AI Chat Configuration
 
-## Project Structure
+The Sage chat feature uses **Grok (xAI)** for real-time AI conversations.
 
-\`\`\`
-sagespace/
-├── app/                    # Next.js 16 App Router pages
-│   ├── (marketing)/        # Landing page
-│   ├── auth/               # Login/signup
-│   ├── playground/         # 1:1 chat with sages
-│   ├── council/            # Sage Circle (multi-sage)
-│   ├── observatory/        # Sage Watch (discovery)
-│   ├── memory/             # Memory Lane (history)
-│   ├── multiverse/         # The Feed (social)
-│   ├── universe-map/       # Sage Galaxy (3D exploration)
-│   ├── persona-editor/     # Sage Studio (creation)
-│   └── demo/               # Hub (dashboard)
-├── components/             # React components
-│   ├── ui/                 # shadcn/ui components
-│   └── icons.tsx           # Icon library
-├── lib/                    # Utilities and configs
-│   ├── supabase/           # Database clients
-│   ├── types/              # TypeScript types
-│   ├── config/             # Feature flags, rate limits
-│   └── sage-templates.ts   # 300 pre-built sage personas
-├── scripts/                # Database migrations
-└── public/                 # Static assets
-\`\`\`
+**Required Environment Variable:**
+- `VITE_XAI_API_KEY` - Get your API key from [console.x.ai](https://console.x.ai)
 
-## Core Features
+Add this to your `.env` file or set it in the Vercel project settings under the **Vars** tab.
 
-### Discovery & Exploration
-- **The Feed**: Social stream of sage-created artifacts with engagement
-- **Sage Watch**: Performance dashboard showing trending sages and metrics
-- **Sage Galaxy**: Immersive 3D-like exploration with spatial navigation
-- **Search & Filters**: By domain, mood, geolocation, and social signals
+**Without this key, the Sage chat will show an error message.**
 
-### Interaction
-- **Playground**: 1:1 conversations with any sage
-- **Sage Circle**: Multi-sage deliberations with diverse perspectives
-- **Memory Lane**: Spotify-inspired browsing of past conversations by mood
-- **Share to Feed**: Publish conversations with privacy controls
+## 📋 Production Readiness
 
-### Creation
-- **Sage Studio**: Guided wizard to build custom AI personas
-- **Artifact Types**: Text, audio, image, and video generation
-- **Safety First**: Built-in PII filtering, watermarking, and provenance
-- **Lineage Tracking**: Remix chains and co-creation trails
+**Status**: 95% Production Ready ✅
 
-### Gamification
-- **XP & Levels**: Earn points for engagement and creation
-- **Quests & Seasons**: Limited-time challenges with rewards
-- **Streaks**: Daily activity tracking
-- **Trust Score**: Quality metrics for sages and users
+See [PRODUCTION_READINESS.md](./PRODUCTION_READINESS.md) for:
+- Testing strategy and commands
+- Monitoring configuration
+- CI/CD pipeline
+- Backup & disaster recovery
+- Load testing
 
-## Tech Stack
-
-- **Framework**: Next.js 16 (App Router), React 19
-- **Styling**: Tailwind CSS v4, shadcn/ui components
-- **Database**: Supabase (Postgres + Auth + Storage)
-- **AI Providers**: Groq (text), ElevenLabs (audio), SDXL (images)
-- **Deployment**: Vercel (Edge Functions + Serverless)
-- **Payments**: Stripe (when enabled)
-
-## Cost Management
-
-SageSpace is designed to run on **near-zero costs** at small scale:
-
-1. **Caching**: Responses cached per sage+prompt combination
-2. **Rate Limits**: Per-plan daily/hourly limits enforced
-3. **Budgets**: Per-sage and per-user spending caps
-4. **Feature Flags**: Expensive features (video) disabled by default
-5. **Free Tier Providers**: Groq, Supabase free tiers cover MVP
-
-See `lib/config/features.ts` for cost guardrails.
-
-## Safety & Compliance
-
-Every artifact includes:
-- ✅ Content provenance (model, trace ID, prompt hash)
-- ✅ Watermarking on all media
-- ✅ PII filtering before generation
-- ✅ Citation requirements for facts
-- ✅ Audit logs for compliance
-
-Row Level Security (RLS) enforces permissions at database level.
-
-## Monetization
-
-- **Free Plan**: 10 artifacts/day, 100 credits
-- **Pro Plan** ($9.99/mo): 100 artifacts/day, priority generation
-- **Team Plan** ($49.99/mo): Shared credit wallet, private circles
-- **Marketplace** (coming soon): Buy/sell custom sages
-
-## Development
-
-### Run migrations
-\`\`\`bash
-npm run db:migrate
-\`\`\`
-
-### Seed test data
-\`\`\`bash
-npm run db:seed
-\`\`\`
-
-### Run tests
-\`\`\`bash
-# Run Playwright E2E tests
-npm run test
-
-# Run with UI (interactive mode)
-npm run test:ui
-
-# Run with browser visible
-npm run test:headed
-
-# Type checking
-npm run type-check
-
-# Validate before build
-npm run validate
-\`\`\`
-
-### Build for production
-\`\`\`bash
-npm run build
-\`\`\`
-
-## Feature Flags
-
-Toggle features in `.env.local`:
+## 🧪 Testing
 
 \`\`\`bash
-ENABLE_AUDIO_GEN=false      # Audio artifact generation
-ENABLE_IMAGE_GEN=false      # Image artifact generation
-ENABLE_VIDEO_GEN=false      # Video artifact generation (expensive!)
-ENABLE_ACCESS_GATE=true     # Password protect site during beta
+# Run all tests
+npm test
+
+# Unit tests
+npm run test:unit
+
+# API tests
+npm run test:api
+
+# E2E tests
+npm run test:e2e
+
+# Coverage
+npm run test:coverage
 \`\`\`
 
-## Deployment
+## 📊 Monitoring
 
-### Deploy to Vercel
+Error tracking via Sentry (configured in `src/lib/monitoring.ts` and `api/lib/monitoring.ts`).
 
-1. Push to GitHub
-2. Import project to Vercel
-3. Add environment variables
-4. Deploy
+Set environment variables:
+- `VITE_SENTRY_DSN` (frontend)
+- `SENTRY_DSN` (backend)
 
-Vercel automatically handles:
-- Edge Functions for API routes
-- Static page caching
-- Incremental Static Regeneration
-- Analytics
+## 🏗️ Architecture
 
-## Live Wiring Mode
+- **Frontend**: React 18 + TypeScript + Vite
+- **Backend**: Next.js API Routes (in `/api` directory) - *Optional for data persistence*
+- **AI**: Grok (xAI) for Sage chat conversations
+- **Database**: Supabase (PostgreSQL) - *Optional for persistence*
+- **Auth**: Supabase Auth - *Optional*
+- **Payments**: Stripe - *Optional*
+- **Realtime**: Supabase Realtime - *Optional*
 
-SageSpace supports both **demo mode** (mock data) and **live mode** (real APIs).
+**Demo Mode**: The app works without backend configuration for exploring features. AI chat requires `VITE_XAI_API_KEY`.
 
-### Demo Mode (Default)
+## 🚀 Deployment
 
-Set in `.env.local`:
-\`\`\`
-NEXT_PUBLIC_DEMO_MODE=true
-\`\`\`
+This application is configured to deploy as a **Vite application** on Vercel.
 
-- Uses mock data for instant testing
-- No database or external services required
-- Perfect for development and previews
-- All UI features work with simulated data
+**Important**: The `next` dependency in package.json is for v0 preview compatibility only and is in devDependencies. The actual application framework is Vite, as specified in `vercel.json`.
 
-### Live Mode
+### Vercel Configuration
 
-Set in `.env.local`:
-\`\`\`
-NEXT_PUBLIC_DEMO_MODE=false
-DATABASE_URL=your_database_url
-# Supabase
-NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
-SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
+The `vercel.json` specifies:
+- Framework: `vite`
+- Build command: `npm run build`
+- Output directory: `dist`
 
-# Groq AI
-GROQ_API_KEY=your_groq_api_key
+**Do not change the framework setting** - this ensures proper deployment.
 
-# Optional: Advanced features
-STRIPE_SECRET_KEY=your_stripe_key
-ENABLE_AUDIO_GEN=false
-ENABLE_IMAGE_GEN=false
-ENABLE_VIDEO_GEN=false
-\`\`\`
+### Environment Variables for Production
 
-- Connects to real Prisma database
-- Full API functionality with persistence
-- Requires all environment variables configured
-- Production-ready with observability
+Set these in your Vercel project settings (Vars tab):
+1. **Required for AI Chat**: `VITE_XAI_API_KEY`
+2. **Optional for Persistence**: `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`
+3. **Optional for Monitoring**: `VITE_SENTRY_DSN`
 
-## Build Validation
+## 📚 Documentation
 
-The build automatically validates code quality:
-- TypeScript compilation (no errors allowed)
-- Type checking across the entire codebase
-- Ensures production-ready code
+- [Development Guide](./DEVELOPMENT.md)
+- [Production Readiness](./PRODUCTION_READINESS.md)
+- [Disaster Recovery](./DISASTER_RECOVERY.md)
+- [Product Assessment](./PRODUCT_ASSESSMENT.md)
+- [Complete Project Summary](./COMPLETE_PROJECT_SUMMARY.md)
 
-\`\`\`bash
-npm run build
-\`\`\`
+## 🎯 Features
 
-## Roadmap
+- ✅ Content creation & management
+- ✅ Social networking (follow, comments, mentions)
+- ✅ AI-powered Sages
+- ✅ Marketplace with Stripe
+- ✅ Enterprise teams & organizations
+- ✅ Analytics & insights
+- ✅ Search & discovery
+- ✅ Real-time notifications
+- ✅ Public API
+- ✅ Webhooks
+- ✅ GDPR compliance
 
-### MVP (Current)
-- ✅ Core discovery and chat flows
-- ✅ Database schema and RLS
-- ✅ Safety and provenance systems
-- ⏳ Text artifact generation
-- ⏳ Stripe integration stub
+## 🔒 Security
 
-### v1.1
-- Audio artifact generation
-- Auto-Showrunner (debates → videos)
-- Constraint Arena battles
-- Embedded cards for sharing
+- Row Level Security (RLS) on all tables
+- Rate limiting on all endpoints
+- Input validation & sanitization
+- XSS protection
+- Webhook signature verification
+- Audit logging
 
-### v1.2
-- Image and video artifacts
-- Marketplace for custom sages
-- Learning Paths
-- Observation Rooms (live watch parties)
+## 🌍 Internationalization
 
-## Contributing
+Supports 6 languages: English, Spanish, French, German, Japanese, Chinese
 
-See CONTRIBUTING.md for guidelines.
+## ♿ Accessibility
 
-## License
-
-MIT License - see LICENSE file for details.
-
-## Support
-
-- Documentation: https://docs.sagespace.ai
-- Discord: https://discord.gg/sagespace
-- Email: support@sagespace.ai
+WCAG 2.1 AA compliant with:
+- Keyboard navigation
+- Screen reader support
+- High contrast mode
+- Skip links
+- Focus management
 
 ---
 
-Built with ❤️ by the SageSpace team
+**Repository**: https://github.com/sagespace-ai/SageSpace-stitch.git

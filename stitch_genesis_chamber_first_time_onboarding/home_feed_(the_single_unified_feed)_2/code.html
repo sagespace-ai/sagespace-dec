@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Home Feed - SageSpace</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<style type="text/tailwindcss">
+    :root {
+      --background-light: #ffffff;
+      --background-dark: #121212;
+      --card-light: #f3f4f6;
+      --card-dark: #1f1f1f;
+      --text-light-primary: #111827;
+      --text-dark-primary: #ffffff;
+      --text-light-secondary: #6b7280;
+      --text-dark-secondary: #9ca3af;
+      --border-light: #e5e7eb;
+      --border-dark: #374151;
+      --toggle-bg-light: #e5e7eb;
+      --toggle-bg-dark: #374151;
+      --toggle-handle-light: #ffffff;
+      --toggle-handle-dark: #111827;
+      --toggle-active-light: #4f46e5;
+      --toggle-active-dark: #818cf8;
+    }
+    .material-symbols-outlined {
+      font-variation-settings:
+      'FILL' 0,
+      'wght' 400,
+      'GRAD' 0,
+      'opsz' 24
+    }
+  </style>
+<script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          fontFamily: {
+            display: ["Inter", "sans-serif"],
+          },
+        },
+      },
+    };
+  </script>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-text-light-primary dark:text-text-dark-primary antialiased">
+<div class="flex h-screen w-full">
+<aside class="w-16 flex-shrink-0 border-r border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark flex flex-col items-center py-6 space-y-8">
+<div class="w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center text-white font-bold text-sm">
+        S
+      </div>
+<nav class="flex flex-col items-center space-y-6">
+<a class="p-2 rounded-md bg-gray-100 dark:bg-gray-800 text-indigo-600 dark:text-indigo-400" href="#">
+<span class="material-symbols-outlined">home</span>
+</a>
+<a class="p-2 rounded-md text-text-light-secondary dark:text-text-dark-secondary hover:bg-gray-100 dark:hover:bg-gray-800" href="#">
+<span class="material-symbols-outlined">explore</span>
+</a>
+<a class="p-2 rounded-md text-text-light-secondary dark:text-text-dark-secondary hover:bg-gray-100 dark:hover:bg-gray-800" href="#">
+<span class="material-symbols-outlined">bookmark</span>
+</a>
+<a class="p-2 rounded-md text-text-light-secondary dark:text-text-dark-secondary hover:bg-gray-100 dark:hover:bg-gray-800" href="#">
+<span class="material-symbols-outlined">group</span>
+</a>
+</nav>
+<div class="mt-auto flex flex-col items-center space-y-6">
+<a class="p-2 rounded-md text-text-light-secondary dark:text-text-dark-secondary hover:bg-gray-100 dark:hover:bg-gray-800" href="#">
+<span class="material-symbols-outlined">settings</span>
+</a>
+<div class="w-8 h-8 rounded-full bg-gray-300">
+<img alt="User avatar" class="rounded-full w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBa7ZYmGTj9arHqvSacVDGkSW7aRLZ7KoPPzK77yIF3ie2t_g5kN27Ow73QFuNzH9lB86cdk3UO-ZZXaXEqzCdewsbCgErFVhuYoDVgGfXDS7tXrCrk4QyJfEAFwhiyyU3Iw9SkMUE2A8NwFauTgIGKQ1MkbTMwwlUpjPfbTqGPiMm2vBebtP-akXyXAAE1wJZnKJdW8B0Z8RjWfez5r3w7vwrDs08VvnFqk-30ovTn9OcgyFJ4AteDf_Vr5Mh7byegcBknX_JdSOAq"/>
+</div>
+</div>
+</aside>
+<main class="flex-1 flex flex-col overflow-hidden">
+<header class="flex h-16 flex-shrink-0 items-center justify-between border-b border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark px-6">
+<div class="flex items-center space-x-4">
+<h1 class="text-xl font-semibold">Home Feed</h1>
+<div class="hidden sm:flex items-center space-x-2 rounded-lg bg-gray-100 dark:bg-gray-800 p-1 text-sm">
+<button class="px-3 py-1 rounded-md bg-white dark:bg-black text-text-light-primary dark:text-text-dark-primary font-medium shadow-sm">Learn</button>
+<button class="px-3 py-1 rounded-md text-text-light-secondary dark:text-text-dark-secondary">Play</button>
+<button class="px-3 py-1 rounded-md text-text-light-secondary dark:text-text-dark-secondary">Build</button>
+<button class="px-3 py-1 rounded-md text-text-light-secondary dark:text-text-dark-secondary">Chill</button>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-2 rounded-full bg-toggle-bg-light dark:bg-toggle-bg-dark p-1 transition-colors duration-300">
+<span class="material-symbols-outlined text-sm ml-2 text-text-light-secondary dark:text-text-dark-secondary">verified</span>
+<span class="text-sm font-medium text-text-light-secondary dark:text-text-dark-secondary">Reality</span>
+<button aria-checked="false" class="relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent bg-toggle-active-light transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2" role="switch" type="button">
+<span class="sr-only">Use setting</span>
+<span aria-hidden="true" class="pointer-events-none inline-block h-5 w-5 translate-x-5 transform rounded-full bg-toggle-handle-light dark:bg-toggle-handle-dark shadow ring-0 transition duration-200 ease-in-out"></span>
+</button>
+<span class="text-sm font-medium text-indigo-600 dark:text-indigo-400">Imagination</span>
+<span class="material-symbols-outlined text-sm mr-2 text-indigo-600 dark:text-indigo-400">auto_awesome</span>
+</div>
+<button class="flex items-center gap-2 rounded-md border border-border-light dark:border-border-dark px-3 py-1.5 text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-800">
+<span class="material-symbols-outlined text-base">psychology</span>
+            Ask a Sage
+          </button>
+</div>
+</header>
+<div class="flex-1 overflow-y-auto p-6 lg:p-8">
+<div class="mx-auto max-w-3xl space-y-8">
+<div class="rounded-lg border border-border-light dark:border-border-dark bg-card-light dark:bg-card-dark overflow-hidden">
+<div class="p-4">
+<div class="flex items-center space-x-3">
+<div class="w-8 h-8 rounded-full bg-purple-200 flex items-center justify-center">
+<span class="material-symbols-outlined text-purple-600 text-base">palette</span>
+</div>
+<div>
+<p class="font-semibold text-sm">Speculative Architecture</p>
+<p class="text-xs text-text-light-secondary dark:text-text-dark-secondary">Generated Image</p>
+</div>
+</div>
+</div>
+<img alt="AI generated futuristic cityscape" class="w-full h-auto object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA2iotZg5cmWBDeHFq0ROYQKl79OhI_yUut_-4FE_WydPp1Ud6RG2mm5-99PzbPcm8hkocscZIIRYy0krZB1Rta713wZKoK2RiysEs3Whs4D6D86ux9pmODI-7EZ86RHBhwa527briLQgV-qYkyg2LXR4-w28e5LqmNqS0nZ2hI78ABS3yHzjuCI29tsvGOZyDNq2VhB9u2YYfd7JJMmTrXQbdJKo4qXfaYPwSaT7-AaIvf_NW86ItYEHMjrB6MrSzUguAzRV8Za1Yj"/>
+<div class="p-4 flex items-center justify-between text-text-light-secondary dark:text-text-dark-secondary">
+<div class="flex items-center space-x-4">
+<button class="flex items-center space-x-1 hover:text-red-500"><span class="material-symbols-outlined text-lg">favorite</span> <span class="text-sm">Like</span></button>
+<button class="flex items-center space-x-1 hover:text-indigo-500"><span class="material-symbols-outlined text-lg">shuffle</span> <span class="text-sm">Remix</span></button>
+<button class="flex items-center space-x-1 hover:text-blue-500"><span class="material-symbols-outlined text-lg">bookmark</span> <span class="text-sm">Save</span></button>
+</div>
+<div class="flex items-center space-x-2">
+<button class="hover:text-green-500"><span class="material-symbols-outlined text-lg">model_training</span></button>
+<button class="hover:text-cyan-500"><span class="material-symbols-outlined text-lg">share</span></button>
+</div>
+</div>
+</div>
+<div class="rounded-lg border border-border-light dark:border-border-dark bg-card-light dark:bg-card-dark p-6">
+<div class="flex items-center space-x-3 mb-4">
+<div class="w-8 h-8 rounded-full bg-green-200 flex items-center justify-center">
+<span class="material-symbols-outlined text-green-600 text-base">science</span>
+</div>
+<div>
+<p class="font-semibold text-sm">Thought Experiment</p>
+<p class="text-xs text-text-light-secondary dark:text-text-dark-secondary">Interactive Card</p>
+</div>
+</div>
+<h3 class="text-lg font-semibold mb-2">What if photosynthesis was 10x more efficient?</h3>
+<p class="text-text-light-secondary dark:text-text-dark-secondary mb-4">Explore the cascading effects on global ecosystems, atmospheric composition, and the future of agriculture. Tap to interact with the simulation.</p>
+<div class="flex items-center space-x-2">
+<button class="flex-1 text-center bg-indigo-600 text-white rounded-md py-2 text-sm font-medium hover:bg-indigo-700">Begin Simulation</button>
+<button class="px-3 py-2 border border-border-light dark:border-border-dark rounded-md text-sm hover:bg-gray-200 dark:hover:bg-gray-700">Show Another</button>
+</div>
+</div>
+<div class="rounded-lg border border-border-light dark:border-border-dark bg-card-light dark:bg-card-dark overflow-hidden">
+<div class="p-4">
+<div class="flex items-center space-x-3">
+<div class="w-8 h-8 rounded-full bg-sky-200 flex items-center justify-center">
+<span class="material-symbols-outlined text-sky-600 text-base">smart_display</span>
+</div>
+<div>
+<p class="font-semibold text-sm">A World Without Bees</p>
+<p class="text-xs text-text-light-secondary dark:text-text-dark-secondary">Generated Video</p>
+</div>
+</div>
+</div>
+<div class="aspect-video bg-gray-900 flex items-center justify-center text-white relative">
+<img class="w-full h-full object-cover opacity-50" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDao2BwX4bwOqdhH1PxjGCi5OOw5EIqGi3_InOQR8ZRXDkTnmCbUjcdpVUZExuPIYETGt_-SmDNna6abw5nypJ22rGvPUC1O25k-wDR236GMSIvSggQzm5hCYn_1ItbvqTLudgtTKdnGRbsaqo701HLswnItxj5hElwYMz4Atj-t23tD0ic22TV2W6b7eaiiRedNupmYeZot1EwPHI9tTc8wqG-muTkQPNabMdzLrku4NgcIMl8tf8tmyq3YdjPpbjLIjX_9c_dmisQ"/>
+<span class="material-symbols-outlined text-6xl absolute">play_circle</span>
+</div>
+<div class="p-4 flex items-center justify-between text-text-light-secondary dark:text-text-dark-secondary">
+<div class="flex items-center space-x-4">
+<button class="flex items-center space-x-1 hover:text-red-500"><span class="material-symbols-outlined text-lg">favorite</span> <span class="text-sm">Like</span></button>
+<button class="flex items-center space-x-1 hover:text-indigo-500"><span class="material-symbols-outlined text-lg">shuffle</span> <span class="text-sm">Remix</span></button>
+<button class="flex items-center space-x-1 hover:text-blue-500"><span class="material-symbols-outlined text-lg">bookmark</span> <span class="text-sm">Save</span></button>
+</div>
+<div class="flex items-center space-x-2">
+<button class="hover:text-green-500"><span class="material-symbols-outlined text-lg">model_training</span></button>
+<button class="hover:text-cyan-500"><span class="material-symbols-outlined text-lg">share</span></button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+
+</body></html>

@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Authentication &amp; Identity Setup</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet"/>
+<script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            primary: "#000000",
+            "background-light": "#FFFFFF",
+            "background-dark": "#111111",
+          },
+          fontFamily: {
+            display: ["Roboto", "sans-serif"],
+          },
+          borderRadius: {
+            DEFAULT: "0.5rem",
+          },
+        },
+      },
+    };
+  </script>
+<style>.no-scrollbar::-webkit-scrollbar {
+        display: none;
+    }.no-scrollbar {
+        -ms-overflow-style: none;scrollbar-width: none;}
+  </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-gray-900 dark:text-gray-100 antialiased">
+<div class="flex flex-col min-h-screen">
+<header class="flex-shrink-0 p-6 md:p-8">
+<div class="flex items-center">
+<svg class="w-8 h-8 text-black dark:text-white" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z" fill-opacity="0.1"></path>
+<path d="M12,2A10,10,0,1,0,22,12,10,10,0,0,0,12,2Zm0,18a8,8,0,1,1,8-8A8,8,0,0,1,12,20Z"></path>
+</svg>
+<span class="ml-3 text-lg font-medium">Personal AI Universe</span>
+</div>
+</header>
+<main class="flex-grow flex items-center justify-center p-4">
+<div class="w-full max-w-md mx-auto">
+<div class="text-center mb-8">
+<h1 class="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-50">Authentication &amp; Identity Setup</h1>
+<p class="mt-2 text-gray-600 dark:text-gray-400">Establish your identity to begin your journey.</p>
+</div>
+<div class="space-y-4">
+<button class="flex items-center justify-center w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors duration-200">
+<svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 24 24"><path d="M22 6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6zm-2 0l-8 5-8-5h16zm0 12H4V8l8 5 8-5v10z"></path></svg>
+            Sign in with Email
+          </button>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<button class="flex items-center justify-center w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors duration-200">
+<svg class="w-5 h-5 mr-3" fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg"><path d="M43.611 20.083H42V20H24v8h11.303c-1.649 4.657-6.08 8-11.303 8c-6.627 0-12-5.373-12-12s5.373-12 12-12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4C12.955 4 4 12.955 4 24s8.955 20 20 20s20-8.955 20-20c0-1.341-.138-2.65-.389-3.917z" fill="#FFC107"></path><path d="M43.611 20.083H42V20H24v8h11.303c-1.649 4.657-6.08 8-11.303 8-6.627 0-12-5.373-12-12s5.373-12 12-12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4C12.955 4 4 12.955 4 24s8.955 20 20 20s20-8.955 20-20c0-1.341-.138-2.65-.389-3.917z" fill="#FF3D00" fill-opacity="0.54"></path><path d="M43.611 20.083H42V20H24v8h11.303c-1.649 4.657-6.08 8-11.303 8-6.627 0-12-5.373-12-12s5.373-12 12-12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4C12.955 4 4 12.955 4 24s8.955 20 20 20s20-8.955 20-20c0-1.341-.138-2.65-.389-3.917z" fill="#4CAF50"></path><path d="M43.611 20.083H42V20H24v8h11.303c-1.649 4.657-6.08 8-11.303 8-6.627 0-12-5.373-12-12s5.373-12 12-12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4C12.955 4 4 12.955 4 24s8.955 20 20 20s20-8.955 20-20c0-1.341-.138-2.65-.389-3.917z" fill="#1976D2"></path></svg>
+              Google
+            </button>
+<button class="flex items-center justify-center w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors duration-200">
+<svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 24 24"><path clip-rule="evenodd" d="M12 2C6.477 2 2 6.477 2 12c0 4.419 2.865 8.169 6.839 9.492.5.092.682-.217.682-.482 0-.237-.009-.868-.014-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.031-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.203 2.398.1 2.651.64.7 1.03 1.595 1.03 2.688 0 3.848-2.338 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.001 10.001 0 0022 12c0-5.523-4.477-10-10-10z" fill-rule="evenodd"></path></svg>
+              GitHub
+            </button>
+</div>
+<button class="flex items-center justify-center w-full px-4 py-3 border border-dashed border-gray-400 dark:border-gray-600 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 hover:border-solid hover:border-gray-500 dark:hover:border-gray-400 transition-all duration-200">
+<span class="material-icons-outlined mr-3 text-lg">business</span>
+            Enterprise SSO
+          </button>
+</div>
+<div class="relative flex py-5 items-center my-4">
+<div class="flex-grow border-t border-gray-200 dark:border-gray-700"></div>
+<span class="flex-shrink mx-4 text-xs text-gray-500 dark:text-gray-400 uppercase">Or create a new identity</span>
+<div class="flex-grow border-t border-gray-200 dark:border-gray-700"></div>
+</div>
+<form class="space-y-6">
+<div>
+<label class="block text-sm font-medium text-gray-700 dark:text-gray-300" for="username">Username</label>
+<div class="mt-1 relative rounded-lg shadow-sm">
+<div class="pointer-events-none absolute inset-y-0 left-0 pl-3 flex items-center">
+<span class="text-gray-500 sm:text-sm">@</span>
+</div>
+<input class="block w-full pl-7 pr-3 py-2 border border-gray-300 dark:border-gray-700 bg-background-light dark:bg-background-dark rounded-lg focus:ring-black dark:focus:ring-white focus:border-black dark:focus:border-white sm:text-sm" id="username" name="username" placeholder="your_unique_name" type="text"/>
+</div>
+</div>
+<div>
+<label class="block text-sm font-medium text-gray-700 dark:text-gray-300" for="identity-seed">Visual Identity Seed</label>
+<div class="mt-1 flex rounded-lg shadow-sm border border-gray-300 dark:border-gray-700 focus-within:ring-1 focus-within:ring-black dark:focus-within:ring-white focus-within:border-black dark:focus-within:border-white">
+<input class="flex-1 block w-full rounded-none rounded-l-lg bg-transparent py-2 px-3 sm:text-sm border-0 focus:ring-0" id="identity-seed" name="identity-seed" placeholder="e.g., cosmic-explorer-7" type="text"/>
+<button class="relative -ml-px inline-flex items-center space-x-2 rounded-r-lg border-l border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-1 focus:ring-black dark:focus:ring-white focus:border-black dark:focus:border-white" type="button">
+<span class="material-icons-outlined text-base">casino</span>
+<span>Randomize</span>
+</button>
+</div>
+<p class="mt-2 text-xs text-gray-500 dark:text-gray-400">This seed generates your unique visual identity across the universe.</p>
+</div>
+<div class="space-y-4">
+<div>
+<span class="text-sm font-medium text-gray-900 dark:text-gray-100">Intent Scope</span>
+<fieldset class="mt-2">
+<legend class="sr-only">Choose an intent scope</legend>
+<div class="relative bg-gray-100 dark:bg-gray-800 rounded-lg p-1 flex">
+<input checked="" class="sr-only" id="scope-personal" name="intent-scope" type="radio" value="Personal"/>
+<label class="relative w-1/3 text-center rounded-md py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 dark:focus:ring-offset-gray-800 focus:ring-black dark:focus:ring-white cursor-pointer has-[:checked]:bg-white dark:has-[:checked]:bg-gray-900 has-[:checked]:text-gray-900 dark:has-[:checked]:text-gray-50 has-[:checked]:shadow-sm transition-all" for="scope-personal">Personal</label>
+<input class="sr-only" id="scope-creator" name="intent-scope" type="radio" value="Creator"/>
+<label class="relative w-1/3 text-center rounded-md py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 dark:focus:ring-offset-gray-800 focus:ring-black dark:focus:ring-white cursor-pointer has-[:checked]:bg-white dark:has-[:checked]:bg-gray-900 has-[:checked]:text-gray-900 dark:has-[:checked]:text-gray-50 has-[:checked]:shadow-sm transition-all" for="scope-creator">Creator</label>
+<input class="sr-only" id="scope-enterprise" name="intent-scope" type="radio" value="Enterprise-linked"/>
+<label class="relative w-1/3 text-center rounded-md py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 dark:focus:ring-offset-gray-800 focus:ring-black dark:focus:ring-white cursor-pointer has-[:checked]:bg-white dark:has-[:checked]:bg-gray-900 has-[:checked]:text-gray-900 dark:has-[:checked]:text-gray-50 has-[:checked]:shadow-sm transition-all" for="scope-enterprise">Enterprise</label>
+</div></fieldset>
+<p class="mt-2 text-xs text-gray-500 dark:text-gray-400">Defines data boundaries and features for your identity.</p>
+</div>
+<div class="flex items-start justify-between pt-4">
+<div class="flex-grow pr-4">
+<span class="text-sm font-medium text-gray-900 dark:text-gray-100">Anonymity</span>
+<p class="text-sm text-gray-500 dark:text-gray-400">Your identity will be private by default.</p>
+</div>
+<button aria-checked="false" class="bg-gray-200 dark:bg-gray-700 relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background-light dark:focus:ring-offset-background-dark focus:ring-black" role="switch" type="button">
+<span class="sr-only">Toggle anonymity</span>
+<span aria-hidden="true" class="translate-x-0 dark:translate-x-0 pointer-events-none inline-block h-5 w-5 rounded-full bg-white dark:bg-gray-400 shadow transform ring-0 transition ease-in-out duration-200"></span>
+</button>
+</div>
+</div>
+<div>
+<button class="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-primary hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background-light dark:focus:ring-offset-background-dark focus:ring-black transition-opacity duration-200" type="submit">Create Identity</button>
+</div>
+</form>
+</div>
+</main>
+<footer class="flex-shrink-0 p-6 md:p-8">
+<p class="text-center text-xs text-gray-500 dark:text-gray-500">
+        By continuing, you agree to the <a class="underline hover:text-gray-700 dark:hover:text-gray-300" href="#">Terms of Service</a> and <a class="underline hover:text-gray-700 dark:hover:text-gray-300" href="#">Privacy Policy</a>.
+      </p>
+</footer>
+</div>
+
+</body></html>

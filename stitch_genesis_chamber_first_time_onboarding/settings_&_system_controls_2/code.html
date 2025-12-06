@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Settings &amp; System Controls</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#3713ec",
+            "background-light": "#f6f6f8",
+            "background-dark": "#131022",
+          },
+          fontFamily: {
+            "display": ["Space Grotesk"]
+          },
+          borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+        },
+      },
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+    .material-symbols-outlined.fill {
+      font-variation-settings: 'FILL' 1;
+    }input[type=range]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        height: 20px;
+        width: 20px;
+        border-radius: 9999px;
+        background-color: white;
+        margin-top: -6px;box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+    }
+    input[type=range]::-moz-range-thumb {
+        height: 20px;
+        width: 20px;
+        border-radius: 9999px;
+        background-color: white;
+        border: none;
+        box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+    }
+  </style>
+</head>
+<body class="font-display bg-background-light dark:bg-background-dark">
+<div class="relative flex h-auto min-h-screen w-full flex-col group/design-root overflow-x-hidden">
+<div class="layout-container flex h-full grow flex-row">
+<aside class="flex-shrink-0 w-64 bg-background-light dark:bg-[#1C1833] border-r border-slate-200/10 dark:border-slate-800/50">
+<div class="flex h-full min-h-[700px] flex-col justify-between p-4">
+<div class="flex flex-col gap-4">
+<div class="flex gap-3 items-center px-2 py-4">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10" data-alt="User profile picture, an abstract purple and blue gradient" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuD6uAs6M1UFdQwkWZJA2LqC-IriNjBcqMJ6lbSsonROrwlvr0priFxyO21avfBR-GjZsL8xkpWp4_kJMnsS7wizfC9T1IR6wGLOlXcvpIzLFdAGxPJAJn_Sz3MjergA66JByLMzwUa6xpNKW9KbA5T_CjwDiTsRfIBM-OvYXnkZ51F6_Tyqvod21r19UKdL51q8Wx6K8RBmGBqms6_aCRswfma_ZD-Jjuw5g3MPPBMIShCr-WMgKJlMG7DaP5zQJbTeMFfhR8sDF-C-");'></div>
+<div class="flex flex-col">
+<h1 class="text-slate-800 dark:text-white text-base font-medium leading-normal">Alex Doe</h1>
+<p class="text-slate-500 dark:text-slate-400 text-sm font-normal leading-normal">alex.doe@email.com</p>
+</div>
+</div>
+<div class="flex flex-col gap-1">
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg bg-primary/10 dark:bg-primary/20" href="#">
+<span class="material-symbols-outlined fill text-primary">palette</span>
+<p class="text-primary text-sm font-medium leading-normal">Visual Identity</p>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-200/50 dark:hover:bg-slate-800/50" href="#">
+<span class="material-symbols-outlined text-slate-600 dark:text-slate-400">psychology</span>
+<p class="text-slate-800 dark:text-white text-sm font-medium leading-normal">Sage Behavior</p>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-200/50 dark:hover:bg-slate-800/50" href="#">
+<span class="material-symbols-outlined text-slate-600 dark:text-slate-400">mic</span>
+<p class="text-slate-800 dark:text-white text-sm font-medium leading-normal">Voice &amp; Interaction</p>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-200/50 dark:hover:bg-slate-800/50" href="#">
+<span class="material-symbols-outlined text-slate-600 dark:text-slate-400">speed</span>
+<p class="text-slate-800 dark:text-white text-sm font-medium leading-normal">Feed Tempo</p>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-200/50 dark:hover:bg-slate-800/50" href="#">
+<span class="material-symbols-outlined text-slate-600 dark:text-slate-400">lock</span>
+<p class="text-slate-800 dark:text-white text-sm font-medium leading-normal">Privacy &amp; Data</p>
+</a>
+</div>
+</div>
+<div class="flex flex-col gap-1">
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-200/50 dark:hover:bg-slate-800/50" href="#">
+<span class="material-symbols-outlined text-slate-600 dark:text-slate-400">help</span>
+<p class="text-slate-800 dark:text-white text-sm font-medium leading-normal">Help Center</p>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-200/50 dark:hover:bg-slate-800/50" href="#">
+<span class="material-symbols-outlined text-slate-600 dark:text-slate-400">logout</span>
+<p class="text-slate-800 dark:text-white text-sm font-medium leading-normal">Logout</p>
+</a>
+</div>
+</div>
+</aside>
+<main class="flex-1 p-8 md:p-12">
+<div class="layout-content-container flex flex-col max-w-4xl mx-auto gap-10">
+<div class="flex flex-wrap justify-between gap-3">
+<div class="flex min-w-72 flex-col gap-2">
+<p class="text-slate-900 dark:text-white text-4xl font-black leading-tight tracking-[-0.033em]">Visual Identity</p>
+<p class="text-slate-500 dark:text-slate-400 text-base font-normal leading-normal">Customize the look and feel of your SageSpace.</p>
+</div>
+</div>
+<div class="flex flex-col gap-6">
+<div>
+<h2 class="text-slate-900 dark:text-white text-[22px] font-bold leading-tight tracking-[-0.015em] pb-3">Theme</h2>
+<div class="max-w-xs">
+<div class="flex h-10 flex-1 items-center justify-center rounded-lg bg-slate-200/80 dark:bg-[#1C1833] p-1">
+<label class="flex cursor-pointer h-full grow items-center justify-center overflow-hidden rounded-lg px-2 has-[:checked]:bg-white dark:has-[:checked]:bg-background-dark has-[:checked]:shadow-sm has-[:checked]:text-slate-900 dark:has-[:checked]:text-white text-slate-500 dark:text-slate-400 text-sm font-medium leading-normal">
+<span class="truncate">Light</span>
+<input class="invisible w-0" name="theme-selector" type="radio" value="Light"/>
+</label>
+<label class="flex cursor-pointer h-full grow items-center justify-center overflow-hidden rounded-lg px-2 has-[:checked]:bg-white dark:has-[:checked]:bg-background-dark has-[:checked]:shadow-sm has-[:checked]:text-slate-900 dark:has-[:checked]:text-white text-slate-500 dark:text-slate-400 text-sm font-medium leading-normal">
+<span class="truncate">Dark</span>
+<input checked="" class="invisible w-0" name="theme-selector" type="radio" value="Dark"/>
+</label>
+<label class="flex cursor-pointer h-full grow items-center justify-center overflow-hidden rounded-lg px-2 has-[:checked]:bg-white dark:has-[:checked]:bg-background-dark has-[:checked]:shadow-sm has-[:checked]:text-slate-900 dark:has-[:checked]:text-white text-slate-500 dark:text-slate-400 text-sm font-medium leading-normal">
+<span class="truncate">System</span>
+<input class="invisible w-0" name="theme-selector" type="radio" value="System"/>
+</label>
+</div>
+</div>
+</div>
+<div>
+<h2 class="text-slate-900 dark:text-white text-[22px] font-bold leading-tight tracking-[-0.015em] pb-3">Accent Color</h2>
+<div class="flex flex-wrap gap-4">
+<button aria-label="Select Electric Blue accent color" class="size-10 rounded-full bg-[#3713ec] ring-2 ring-offset-2 ring-offset-background-light dark:ring-offset-background-dark ring-primary"></button>
+<button aria-label="Select Vibrant Magenta accent color" class="size-10 rounded-full bg-[#E040FB]"></button>
+<button aria-label="Select Emerald Green accent color" class="size-10 rounded-full bg-[#10b981]"></button>
+<button aria-label="Select Bright Orange accent color" class="size-10 rounded-full bg-[#f97316]"></button>
+<button aria-label="Select Rose Red accent color" class="size-10 rounded-full bg-[#f43f5e]"></button>
+<button aria-label="Open color picker" class="size-10 rounded-full border border-slate-300 dark:border-slate-700 flex items-center justify-center">
+<span class="material-symbols-outlined text-slate-500 dark:text-slate-400">colorize</span>
+</button>
+</div>
+</div>
+<div>
+<h2 class="text-slate-900 dark:text-white text-[22px] font-bold leading-tight tracking-[-0.015em] pb-4">Font Size</h2>
+<div class="flex flex-col gap-4 max-w-md">
+<div class="flex items-center gap-4">
+<span class="text-slate-500 dark:text-slate-400 text-sm">Small</span>
+<input class="w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-primary" max="100" min="0" type="range" value="50"/>
+<span class="text-slate-500 dark:text-slate-400 text-sm">Large</span>
+</div>
+</div>
+</div>
+<div>
+<h2 class="text-slate-900 dark:text-white text-[22px] font-bold leading-tight tracking-[-0.015em] pb-3">Cognitive Load Dial</h2>
+<p class="text-slate-500 dark:text-slate-400 text-sm font-normal leading-normal max-w-2xl pb-4">Adjust the intensity of your SageSpace experience. Lower settings reduce distractions, while higher settings encourage exploration.</p>
+<div class="max-w-2xl">
+<div class="flex h-10 flex-1 items-center justify-center rounded-lg bg-slate-200/80 dark:bg-[#1C1833] p-1">
+<label class="flex cursor-pointer h-full grow items-center justify-center overflow-hidden rounded-lg px-3 text-center has-[:checked]:bg-white dark:has-[:checked]:bg-background-dark has-[:checked]:shadow-sm has-[:checked]:text-slate-900 dark:has-[:checked]:text-white text-slate-500 dark:text-slate-400 text-sm font-medium leading-normal">
+<span class="truncate">Minimal</span>
+<input class="invisible w-0" name="cognitive-load-selector" type="radio" value="minimal"/>
+</label>
+<label class="flex cursor-pointer h-full grow items-center justify-center overflow-hidden rounded-lg px-3 text-center has-[:checked]:bg-white dark:has-[:checked]:bg-background-dark has-[:checked]:shadow-sm has-[:checked]:text-slate-900 dark:has-[:checked]:text-white text-slate-500 dark:text-slate-400 text-sm font-medium leading-normal">
+<span class="truncate">Balanced</span>
+<input checked="" class="invisible w-0" name="cognitive-load-selector" type="radio" value="balanced"/>
+</label>
+<label class="flex cursor-pointer h-full grow items-center justify-center overflow-hidden rounded-lg px-3 text-center has-[:checked]:bg-white dark:has-[:checked]:bg-background-dark has-[:checked]:shadow-sm has-[:checked]:text-slate-900 dark:has-[:checked]:text-white text-slate-500 dark:text-slate-400 text-sm font-medium leading-normal">
+<span class="truncate">High-intensity</span>
+<input class="invisible w-0" name="cognitive-load-selector" type="radio" value="high-intensity"/>
+</label>
+</div>
+</div>
+</div>
+</div>
+<hr class="border-slate-200 dark:border-slate-800/50 my-6"/>
+<div class="flex flex-col gap-6">
+<div>
+<h2 class="text-slate-900 dark:text-white text-4xl font-black leading-tight tracking-[-0.033em]">Sage Behavior</h2>
+<p class="text-slate-500 dark:text-slate-400 text-base font-normal leading-normal mt-2">Define the core personality and knowledge of your AI.</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+<div class="flex flex-col gap-2">
+<label class="text-sm font-medium text-slate-700 dark:text-slate-300" for="ai-persona">Core AI Persona</label>
+<select class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-background-light dark:bg-slate-800 px-3 py-2 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary" id="ai-persona" name="ai-persona">
+<option>Creative</option>
+<option>Analytical</option>
+<option selected="">Mentor</option>
+<option>Collaborator</option>
+</select>
+</div>
+<div class="flex flex-col gap-2">
+<label class="text-sm font-medium text-slate-700 dark:text-slate-300">Proactivity Level</label>
+<div class="flex items-center justify-between mt-2">
+<span class="text-slate-500 dark:text-slate-400 text-xs">Reactive</span>
+<input class="w-full mx-4 h-2 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-primary" max="100" min="0" type="range" value="75"/>
+<span class="text-slate-500 dark:text-slate-400 text-xs">Proactive</span>
+</div>
+</div>
+</div>
+<div class="flex flex-col gap-2">
+<label class="text-sm font-medium text-slate-700 dark:text-slate-300" for="knowledge-base">Knowledge Base Integration</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">link</span>
+<input class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-background-light dark:bg-slate-800 pl-10 pr-3 py-2 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary" id="knowledge-base" name="knowledge-base" placeholder="Connect personal documents, databases via API..." type="text"/>
+</div>
+</div>
+</div>
+<div class="flex justify-end pt-4">
+<button class="bg-primary hover:bg-primary/90 text-white font-medium py-2 px-6 rounded-lg">Save Changes</button>
+</div>
+</div>
+</main>
+</div>
+</div>
+
+</body></html>

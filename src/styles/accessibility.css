@@ -1,0 +1,104 @@
+/* High Contrast Mode */
+.high-contrast {
+  --text-color: #000000;
+  --bg-color: #ffffff;
+  --border-color: #000000;
+  --primary-color: #0000ff;
+  --error-color: #ff0000;
+  --success-color: #008000;
+}
+
+.high-contrast * {
+  color: var(--text-color) !important;
+  background-color: var(--bg-color) !important;
+  border-color: var(--border-color) !important;
+}
+
+.high-contrast button,
+.high-contrast a {
+  border: 2px solid var(--border-color) !important;
+  padding: 8px 16px !important;
+}
+
+.high-contrast button:focus,
+.high-contrast a:focus {
+  outline: 3px solid var(--primary-color) !important;
+  outline-offset: 2px !important;
+}
+
+/* Screen Reader Only */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+.sr-only:focus {
+  position: static;
+  width: auto;
+  height: auto;
+  padding: inherit;
+  margin: inherit;
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
+}
+
+/* Focus Styles */
+*:focus-visible {
+  outline: 2px solid var(--primary-color, #3b82f6);
+  outline-offset: 2px;
+}
+
+/* Skip Link */
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: var(--primary-color, #3b82f6);
+  color: white;
+  padding: 8px;
+  text-decoration: none;
+  z-index: 100;
+}
+
+.skip-link:focus {
+  top: 0;
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Minimum Touch Target Size */
+button,
+a,
+input,
+select,
+textarea {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+/* ARIA Live Regions */
+[aria-live] {
+  position: absolute;
+  left: -10000px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}

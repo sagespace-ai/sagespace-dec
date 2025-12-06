@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Verifying Browser</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<style>
+      .spinner {
+        width: 24px;
+        height: 24px;
+        border: 2px solid currentColor;
+        border-right-color: transparent;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+    </style>
+<script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              primary: "#000000",
+              "background-light": "#ffffff",
+              "background-dark": "#000000",
+            },
+            fontFamily: {
+              display: ["Inter", "sans-serif"],
+            },
+            borderRadius: {
+              DEFAULT: "0.5rem",
+            },
+          },
+        },
+      };
+    </script>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display">
+<div class="flex h-screen w-full flex-col">
+<main class="flex flex-1 flex-col items-center justify-center p-4">
+<div class="flex flex-col items-center space-y-4">
+<div aria-label="Loading" class="spinner text-gray-400 dark:text-gray-600" role="status">
+<span class="sr-only">Loading...</span>
+</div>
+<p class="text-base text-gray-900 dark:text-gray-100">
+          We're verifying your browser
+        </p>
+</div>
+</main>
+<footer class="w-full p-6">
+<p class="text-center font-mono text-xs text-gray-500 dark:text-gray-600">
+        Security Checkpoint | sfo1::1764352197-6Le1fi8d4B4gfcoCrtLy9ZepaivVknsS
+      </p>
+</footer>
+</div>
+
+</body></html>

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Landing / Gateway</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+<script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              primary: "#3b82f6", // A vibrant blue
+              "background-light": "#ffffff",
+              "background-dark": "#0a0a0a",
+            },
+            fontFamily: {
+              display: ["Inter", "sans-serif"],
+            },
+            borderRadius: {
+              DEFAULT: "0.5rem", // 8px
+            },
+          },
+        },
+      };
+    </script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<style>
+        .video-overlay::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.4);
+            z-index: 1;
+        }
+        .fade-in-out {
+            animation: fadeInOut 8s ease-in-out infinite;
+        }
+        .fade-in-out:nth-child(2) {
+            animation-delay: 2.66s;
+        }
+        .fade-in-out:nth-child(3) {
+            animation-delay: 5.33s;
+        }
+        @keyframes fadeInOut {
+            0% { opacity: 0; transform: translateY(10px); }
+            10% { opacity: 1; transform: translateY(0); }
+            33.33% { opacity: 1; transform: translateY(0); }
+            43.33% { opacity: 0; transform: translateY(-10px); }
+            100% { opacity: 0; }
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-gray-900 dark:text-gray-100 font-display antialiased">
+<div class="relative w-full h-screen overflow-hidden">
+<video autoplay="" class="absolute top-0 left-0 w-full h-full object-cover z-0" loop="" muted="" playsinline="">
+<source src="https://assets.mixkit.co/videos/preview/mixkit-a-woman-in-a-vr-headset-works-in-a-virtual-office-42521-large.mp4" type="video/mp4"/>
+        Your browser does not support the video tag.
+    </video>
+<div class="video-overlay"></div>
+<div class="relative z-10 flex flex-col h-full text-white">
+<header class="absolute top-0 left-0 right-0 p-8">
+<nav class="flex justify-center items-center">
+<ul class="flex items-center space-x-8 text-sm font-medium">
+<li><a class="transition-colors hover:text-gray-300" href="#">About</a></li>
+<li><a class="transition-colors hover:text-gray-300" href="#">Safety</a></li>
+<li><a class="transition-colors hover:text-gray-300" href="#">Vision</a></li>
+</ul>
+</nav>
+</header>
+<main class="flex-grow flex flex-col items-center justify-center text-center px-4 -mt-16 sm:-mt-20">
+<div class="flex flex-col items-center">
+<h1 class="text-4xl md:text-5xl lg:text-6xl font-bold max-w-4xl leading-tight">Your personal AI universe for work, play, and creation.</h1>
+<div class="mt-12 flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-4">
+<a class="bg-white text-gray-900 font-medium py-3 px-8 rounded-lg shadow-md hover:bg-gray-200 transition-all duration-300 w-full sm:w-auto" href="#">Enter as Guest</a>
+<a class="bg-black/20 backdrop-blur-sm border border-white/20 text-white font-medium py-3 px-8 rounded-lg hover:bg-white/10 transition-all duration-300 w-full sm:w-auto" href="#">Sign In</a>
+<a class="bg-primary text-white font-medium py-3 px-8 rounded-lg shadow-lg hover:bg-blue-700 transition-all duration-300 w-full sm:w-auto" href="#">Create Your Universe</a>
+</div>
+</div>
+<div class="mt-16 sm:mt-24 px-4 w-full max-w-2xl">
+<div class="relative bg-black/20 backdrop-blur-sm border border-white/20 rounded-lg p-6 h-28 flex items-center justify-center text-center">
+<div class="absolute inset-0">
+<div class="fade-in-out absolute inset-0 flex items-center justify-center px-6">
+<p class="text-lg md:text-xl font-medium text-white/90">A cancer researcher visualizing cell inclusion.</p>
+</div>
+<div class="fade-in-out absolute inset-0 flex items-center justify-center px-6">
+<p class="text-lg md:text-xl font-medium text-white/90">A founder building a dashboard in 3 minutes.</p>
+</div>
+<div class="fade-in-out absolute inset-0 flex items-center justify-center px-6">
+<p class="text-lg md:text-xl font-medium text-white/90">A creator turning a thought into income in one session.</p>
+</div>
+</div>
+</div>
+</div>
+</main>
+<footer class="p-6 text-center text-xs text-gray-300/60">
+<p>© 2024 Your Company. All rights reserved.</p>
+</footer>
+</div>
+</div>
+
+</body></html>

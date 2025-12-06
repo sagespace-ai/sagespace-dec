@@ -1,0 +1,5 @@
+{
+  "name": "SageSpace",
+  "description": "A multimodal, self-generative agentic social media feed that adapts content—images, articles, and memes—to your specific professional and chaotic personal interests.",
+  "requestFramePermissions": []
+}

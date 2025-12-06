@@ -1,0 +1,4 @@
+# Ignore API directory for Vercel deployment
+# The API should be deployed separately or use Vercel Serverless Functions
+api/
+supabase/

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SageSpace Stitch</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              sage: {
+                50: '#f2fcf5',
+                100: '#e1f8e8',
+                200: '#c3eed4',
+                300: '#94e0b8',
+                400: '#5cc995',
+                500: '#36ad7f',
+                600: '#258b66',
+                700: '#216e53',
+                800: '#1e5844',
+                900: '#194939',
+                950: '#0c2820',
+              },
+              space: {
+                900: '#0B0D14',
+                800: '#131620',
+                700: '#1C212E',
+                600: '#262D3D',
+              }
+            },
+            animation: {
+              'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+              'stitch': 'stitch 2s ease-in-out infinite',
+            },
+            keyframes: {
+              stitch: {
+                '0%, 100%': { transform: 'scale(1)', opacity: '0.5' },
+                '50%': { transform: 'scale(1.1)', opacity: '1' },
+              }
+            }
+          }
+        }
+      }
+    </script>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap');
+      
+      body {
+        font-family: 'Inter', sans-serif;
+        background-color: #0B0D14; /* space-900 */
+        color: #e1f8e8;
+      }
+      
+      .mono {
+        font-family: 'JetBrains Mono', monospace;
+      }
+
+      /* Custom scrollbar */
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #131620;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #262D3D;
+        border-radius: 4px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #36ad7f;
+      }
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "lucide-react": "https://aistudiocdn.com/lucide-react@^0.555.0",
+    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.30.0",
+    "react/": "https://aistudiocdn.com/react@^19.2.0/",
+    "react": "https://aistudiocdn.com/react@^19.2.0",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
+</head>
+  <body>
+    <div id="root"></div>
+  <script type="module" src="/index.tsx"></script>
+</body>
+</html>

@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Enterprise Integration Screen</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings:
+            'FILL' 0,
+            'wght' 400,
+            'GRAD' 0,
+            'opsz' 24;
+        }
+    </style>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary": "#3713ec",
+              "background-light": "#f6f6f8",
+              "background-dark": "#131022",
+            },
+            fontFamily: {
+              "display": ["Space Grotesk", "sans-serif"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+</head>
+<body class="font-display bg-background-light dark:bg-background-dark">
+<div class="relative flex h-auto min-h-screen w-full flex-col dark group/design-root">
+<div class="flex min-h-screen">
+<aside class="flex flex-col w-64 p-4 bg-background-light dark:bg-background-dark border-r border-slate-200/10 dark:border-slate-800/50 shrink-0">
+<div class="flex flex-col gap-4">
+<div class="flex items-center gap-3 px-2">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10" data-alt="SageSpace company logo" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAoHWZO64OPlBN06tbj1aRIn_lgRjsd52XRgfocuGa3BMHJtCJq3lMxSOChEtU9zKyl-f96xG7jGsEV-gAgRoj4j2hTI7hSB4skwiK-PksI_WPn46riK6aP1klAlz8yR1w1OPWrITWimJ48tDiU5CfYC4fdeDTmvFkMBMDksiXkp-2u-k0CmT-Y7hdzpeBILRE5_gePmQCGqK9k-DfNyxJRBPY-Orfaf97JClQ_c5tJLxa0_zVjbSEaDm-jWzSxy7ZA4pS9iBzGjkMy");'></div>
+<div class="flex flex-col">
+<h1 class="text-slate-900 dark:text-white text-base font-medium leading-normal">SageSpace</h1>
+<p class="text-slate-500 dark:text-slate-400 text-sm font-normal leading-normal">Enterprise Suite</p>
+</div>
+</div>
+<nav class="flex flex-col gap-2 mt-4">
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg bg-primary/10 dark:bg-primary/20 text-primary dark:text-white" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<p class="text-sm font-medium leading-normal">Dashboard</p>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-200/50 dark:hover:bg-slate-800/50 text-slate-700 dark:text-slate-300" href="#">
+<span class="material-symbols-outlined">groups</span>
+<p class="text-sm font-medium leading-normal">Team Universes</p>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-200/50 dark:hover:bg-slate-800/50 text-slate-700 dark:text-slate-300" href="#">
+<span class="material-symbols-outlined">lock_open</span>
+<p class="text-sm font-medium leading-normal">Access Control</p>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-200/50 dark:hover:bg-slate-800/50 text-slate-700 dark:text-slate-300" href="#">
+<span class="material-symbols-outlined">verified_user</span>
+<p class="text-sm font-medium leading-normal">Content Governance</p>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-200/50 dark:hover:bg-slate-800/50 text-slate-700 dark:text-slate-300" href="#">
+<span class="material-symbols-outlined">gavel</span>
+<p class="text-sm font-medium leading-normal">Compliance</p>
+</a>
+</nav>
+</div>
+<div class="flex flex-col gap-1 mt-auto">
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-200/50 dark:hover:bg-slate-800/50 text-slate-700 dark:text-slate-300" href="#">
+<span class="material-symbols-outlined">settings</span>
+<p class="text-sm font-medium leading-normal">Settings</p>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-200/50 dark:hover:bg-slate-800/50 text-slate-700 dark:text-slate-300" href="#">
+<span class="material-symbols-outlined">help</span>
+<p class="text-sm font-medium leading-normal">Help Center</p>
+</a>
+</div>
+</aside>
+<main class="flex-1 overflow-y-auto">
+<div class="p-8">
+<div class="flex flex-wrap justify-between gap-3">
+<div class="flex min-w-72 flex-col gap-2">
+<p class="text-slate-900 dark:text-white text-4xl font-black leading-tight tracking-[-0.033em]">Dashboard</p>
+<p class="text-slate-500 dark:text-slate-400 text-base font-normal leading-normal">Welcome back, Admin. Here's a summary of your organization's universe.</p>
+</div>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-8">
+<div class="flex flex-col gap-2 rounded-xl p-6 bg-white dark:bg-slate-900/70 border border-slate-200/80 dark:border-slate-800/50">
+<p class="text-slate-600 dark:text-slate-300 text-base font-medium leading-normal">Active Users</p>
+<p class="text-slate-900 dark:text-white tracking-light text-2xl font-bold leading-tight">1,482</p>
+<p class="text-green-500 dark:text-green-400 text-base font-medium leading-normal">+2.5%</p>
+</div>
+<div class="flex flex-col gap-2 rounded-xl p-6 bg-white dark:bg-slate-900/70 border border-slate-200/80 dark:border-slate-800/50">
+<p class="text-slate-600 dark:text-slate-300 text-base font-medium leading-normal">Team Universes</p>
+<p class="text-slate-900 dark:text-white tracking-light text-2xl font-bold leading-tight">56</p>
+<p class="text-green-500 dark:text-green-400 text-base font-medium leading-normal">+5</p>
+</div>
+<div class="flex flex-col gap-2 rounded-xl p-6 bg-white dark:bg-slate-900/70 border border-slate-200/80 dark:border-slate-800/50">
+<p class="text-slate-600 dark:text-slate-300 text-base font-medium leading-normal">High-Risk Flags</p>
+<p class="text-slate-900 dark:text-white tracking-light text-2xl font-bold leading-tight">12</p>
+<p class="text-orange-500 dark:text-orange-400 text-base font-medium leading-normal">-1.2%</p>
+</div>
+<div class="flex flex-col gap-2 rounded-xl p-6 bg-white dark:bg-slate-900/70 border border-slate-200/80 dark:border-slate-800/50">
+<p class="text-slate-600 dark:text-slate-300 text-base font-medium leading-normal">System Health</p>
+<p class="text-slate-900 dark:text-white tracking-light text-2xl font-bold leading-tight">99.9% Uptime</p>
+<p class="text-green-500 dark:text-green-400 text-base font-medium leading-normal">Stable</p>
+</div>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-8">
+<div class="lg:col-span-1 flex flex-col gap-6">
+<div class="flex flex-col gap-4 rounded-xl p-6 bg-white dark:bg-slate-900/70 border border-slate-200/80 dark:border-slate-800/50">
+<div class="flex items-start justify-between">
+<div>
+<h2 class="text-slate-900 dark:text-white text-xl font-bold leading-tight tracking-[-0.015em]">Shadow Mode</h2>
+<p class="text-slate-500 dark:text-slate-400 text-sm mt-1">Observe, simulate, and audit without impacting live data.</p>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input class="sr-only peer" type="checkbox" value=""/>
+<div class="w-11 h-6 bg-slate-200 dark:bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-slate-600 peer-checked:bg-primary"></div>
+</label>
+</div>
+<div class="flex p-4 rounded-lg bg-primary/10 dark:bg-primary/20 items-start gap-3">
+<span class="material-symbols-outlined text-primary dark:text-slate-300 mt-0.5">visibility</span>
+<div class="flex flex-col">
+<p class="font-medium text-slate-800 dark:text-slate-200 text-sm">Read-Only Access</p>
+<p class="text-slate-600 dark:text-slate-400 text-sm">Simulate workflows in an isolated environment. Changes here won't affect your organization's data.</p>
+</div>
+</div>
+</div>
+<div class="bg-white dark:bg-slate-900/70 border border-slate-200/80 dark:border-slate-800/50 rounded-xl p-6">
+<h2 class="text-slate-900 dark:text-white text-xl font-bold leading-tight tracking-[-0.015em]">Knowledge Map</h2>
+<p class="text-slate-500 dark:text-slate-400 text-sm mt-1">Visualize connections across your enterprise knowledge base.</p>
+<div class="mt-4 h-64 w-full bg-slate-100 dark:bg-slate-800/50 rounded-lg flex items-center justify-center">
+<p class="text-slate-500 dark:text-slate-400 text-sm">Interactive Map Visualization</p>
+</div>
+</div>
+<div class="bg-white dark:bg-slate-900/70 border border-slate-200/80 dark:border-slate-800/50 rounded-xl p-6">
+<h2 class="text-slate-900 dark:text-white text-xl font-bold leading-tight tracking-[-0.015em]">Compliance Overlays</h2>
+<p class="text-slate-500 dark:text-slate-400 text-sm mt-1">Enable specific regulatory compliance features.</p>
+<div class="flex flex-col gap-4 mt-4">
+<div class="flex items-center justify-between">
+<span class="text-slate-700 dark:text-slate-300 font-medium">GDPR</span>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox" value=""/>
+<div class="w-11 h-6 bg-slate-200 dark:bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-slate-600 peer-checked:bg-primary"></div>
+</label>
+</div>
+<div class="flex items-center justify-between">
+<span class="text-slate-700 dark:text-slate-300 font-medium">HIPAA</span>
+<label class="relative inline-flex items-center cursor-pointer">
+<input class="sr-only peer" type="checkbox" value=""/>
+<div class="w-11 h-6 bg-slate-200 dark:bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-slate-600 peer-checked:bg-primary"></div>
+</label>
+</div>
+<div class="flex items-center justify-between">
+<span class="text-slate-700 dark:text-slate-300 font-medium">CCPA</span>
+<label class="relative inline-flex items-center cursor-pointer">
+<input class="sr-only peer" type="checkbox" value=""/>
+<div class="w-11 h-6 bg-slate-200 dark:bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-slate-600 peer-checked:bg-primary"></div>
+</label>
+</div>
+</div>
+</div>
+</div>
+<div class="lg:col-span-2 bg-white dark:bg-slate-900/70 border border-slate-200/80 dark:border-slate-800/50 rounded-xl p-6">
+<div class="flex flex-wrap justify-between items-center gap-4">
+<div>
+<h2 class="text-slate-900 dark:text-white text-xl font-bold leading-tight tracking-[-0.015em]">User Access Management</h2>
+<p class="text-slate-500 dark:text-slate-400 text-sm mt-1">Manage users, roles, and permissions.</p>
+</div>
+<div class="flex items-center gap-2">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">search</span>
+<input class="pl-10 pr-4 py-2 w-48 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 rounded-lg focus:ring-primary focus:border-primary" placeholder="Search users..." type="text"/>
+</div>
+<button class="flex items-center gap-2 bg-primary text-white font-medium px-4 py-2 rounded-lg hover:bg-primary/90">
+<span class="material-symbols-outlined text-base">add</span>
+                                        Add User
+                                    </button>
+</div>
+</div>
+<div class="overflow-x-auto mt-6">
+<table class="w-full text-left">
+<thead class="border-b border-slate-200/80 dark:border-slate-800/50">
+<tr>
+<th class="p-4 text-sm font-semibold text-slate-500 dark:text-slate-400">User</th>
+<th class="p-4 text-sm font-semibold text-slate-500 dark:text-slate-400">Team</th>
+<th class="p-4 text-sm font-semibold text-slate-500 dark:text-slate-400">Role</th>
+<th class="p-4 text-sm font-semibold text-slate-500 dark:text-slate-400">Status</th>
+<th class="p-4 text-sm font-semibold text-slate-500 dark:text-slate-400 text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-slate-200/80 dark:divide-slate-800/50">
+<tr class="hover:bg-slate-100/50 dark:hover:bg-slate-800/40">
+<td class="p-4">
+<div class="flex items-center gap-3">
+<img class="w-8 h-8 rounded-full" data-alt="User avatar for Olivia Rhye" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDgG89dHeBKit_Ephnh3QHQUl8RXhyyBcGekOQhviap-jgooUwQdiNFaP_WfKp0rPMffChFIKi0QsIhXEWgxqWc8uE1hgxB8JCTY7usZbAZiyX3_eKyWXszHDPxG_SyVioTiZDBcNeBAN0zKPQKaKTKFnxdWIdAkzywvVyiOaTLP8MOcDHZqPYpFn-9couZoU3aTrg8y_4lD69vO9ptEQA0IvVwbTF6ddp1cD_T_cDy4UNJvWpOSfxm_hcU6_e2y8Q5C081wYGDIOgg"/>
+<div>
+<p class="font-medium text-slate-800 dark:text-slate-200">Olivia Rhye</p>
+<p class="text-sm text-slate-500 dark:text-slate-400">olivia@sagespace.com</p>
+</div>
+</div>
+</td>
+<td class="p-4 text-slate-600 dark:text-slate-300">Engineering</td>
+<td class="p-4 text-slate-600 dark:text-slate-300">Admin</td>
+<td class="p-4">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 dark:bg-green-900/50 text-green-800 dark:text-green-300">Active</span>
+</td>
+<td class="p-4 text-right">
+<button class="text-slate-500 dark:text-slate-400 hover:text-primary"><span class="material-symbols-outlined">edit</span></button>
+<button class="text-slate-500 dark:text-slate-400 hover:text-red-500 ml-2"><span class="material-symbols-outlined">delete</span></button>
+</td>
+</tr>
+<tr class="hover:bg-slate-100/50 dark:hover:bg-slate-800/40">
+<td class="p-4">
+<div class="flex items-center gap-3">
+<img class="w-8 h-8 rounded-full" data-alt="User avatar for Phoenix Baker" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBGCrk3YLIjJ3I986EjJiJ29_8Y9TDJZHQUYXd2YB68AhcxsGD3BdGXtuvNur0zeMoyVnkcyqRjPzLR0vuBRsiKIVJOOn7k0RZbDbVgfGnXT4QOBsZRdmTThsNfFJSWuMYlSEmURZANFTvNh-6vxf3PtQRyk2CBIST1sSAdhX8dMXiwA79RtNiSsLWyawLEAWu-7xLXyIjynHU2k4x23Wxr2Xm5F_kBLcZCKYRxetXbCJn44JTfVUG2gADc-b0XA-KAKlGqz4VubVn4"/>
+<div>
+<p class="font-medium text-slate-800 dark:text-slate-200">Phoenix Baker</p>
+<p class="text-sm text-slate-500 dark:text-slate-400">phoenix@sagespace.com</p>
+</div>
+</div>
+</td>
+<td class="p-4 text-slate-600 dark:text-slate-300">Design</td>
+<td class="p-4 text-slate-600 dark:text-slate-300">Manager</td>
+<td class="p-4">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 dark:bg-green-900/50 text-green-800 dark:text-green-300">Active</span>
+</td>
+<td class="p-4 text-right">
+<button class="text-slate-500 dark:text-slate-400 hover:text-primary"><span class="material-symbols-outlined">edit</span></button>
+<button class="text-slate-500 dark:text-slate-400 hover:text-red-500 ml-2"><span class="material-symbols-outlined">delete</span></button>
+</td>
+</tr>
+<tr class="hover:bg-slate-100/50 dark:hover:bg-slate-800/40">
+<td class="p-4">
+<div class="flex items-center gap-3">
+<img class="w-8 h-8 rounded-full" data-alt="User avatar for Lana Steiner" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDEsHZBHGSvv8VAracgnN-WMSsD_AfYQ4jFK1-4v9OvPMOhUvpWNIvZSB3LpZzHVfgvApYrq8OAHBdWspMPPEMycYArxVxrJUAxCRRZ83kdOFwSscqXSKBZwuIIergMuU2AUR7q7Ztnr4lU3IZJZ7JG8tBL6WqzIuDbal97hB8rh7HlPGxr_uwZNetLi5m7Mq3I_7RKykPivej3m8VK4yIxQsQRPvBjohkjbYW1ssHzLvfI2hzjSgmWHJu7TH78SLI2_JUvtDhK8oqS"/>
+<div>
+<p class="font-medium text-slate-800 dark:text-slate-200">Lana Steiner</p>
+<p class="text-sm text-slate-500 dark:text-slate-400">lana@sagespace.com</p>
+</div>
+</div>
+</td>
+<td class="p-4 text-slate-600 dark:text-slate-300">Product</td>
+<td class="p-4 text-slate-600 dark:text-slate-300">Analyst</td>
+<td class="p-4">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 dark:bg-yellow-900/50 text-yellow-800 dark:text-yellow-300">Pending</span>
+</td>
+<td class="p-4 text-right">
+<button class="text-slate-500 dark:text-slate-400 hover:text-primary"><span class="material-symbols-outlined">edit</span></button>
+<button class="text-slate-500 dark:text-slate-400 hover:text-red-500 ml-2"><span class="material-symbols-outlined">delete</span></button>
+</td>
+</tr>
+<tr class="hover:bg-slate-100/50 dark:hover:bg-slate-800/40">
+<td class="p-4">
+<div class="flex items-center gap-3">
+<img class="w-8 h-8 rounded-full" data-alt="User avatar for Demi Wilkinson" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCGg-1s84hY8TZoGFnZmUIHkVu9hR7gvIvDS53pW0pPM5KuHxlcigjn6ZFZKmwXOSZP7EgIbD45tQdF-hGBLdyq7HF99eczKNZ3UFbtYMz9usP5i2it9IF5H7UowWskzu0j9_7RAz8pryR9rz9Qwxu48ilXgAI2Zxu42FA1iR57OLmhIygj3HQbXam7PsoDptgsF0Hq2a-XT1vRnYeCcuqpjfPbbCo-HpCSa73vL_d_dH6m86Eb-LbS8BGxzLkt2E_9QVJ_fcgJ91wq"/>
+<div>
+<p class="font-medium text-slate-800 dark:text-slate-200">Demi Wilkinson</p>
+<p class="text-sm text-slate-500 dark:text-slate-400">demi@sagespace.com</p>
+</div>
+</div>
+</td>
+<td class="p-4 text-slate-600 dark:text-slate-300">Marketing</td>
+<td class="p-4 text-slate-600 dark:text-slate-300">Member</td>
+<td class="p-4">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 dark:bg-green-900/50 text-green-800 dark:text-green-300">Active</span>
+</td>
+<td class="p-4 text-right">
+<button class="text-slate-500 dark:text-slate-400 hover:text-primary"><span class="material-symbols-outlined">edit</span></button>
+<button class="text-slate-500 dark:text-slate-400 hover:text-red-500 ml-2"><span class="material-symbols-outlined">delete</span></button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+</div>
+</body></html>

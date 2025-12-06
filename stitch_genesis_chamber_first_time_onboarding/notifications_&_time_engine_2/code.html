@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Notifications &amp; Time Engine</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#137fec",
+            "background-light": "#f6f7f8",
+            "background-dark": "#101922",
+          },
+          fontFamily: {
+            "display": ["Inter", "sans-serif"]
+          },
+          borderRadius: {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+        },
+      },
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings:
+        'FILL' 0,
+        'wght' 400,
+        'GRAD' 0,
+        'opsz' 24
+    }
+    .material-symbols-outlined.fill {
+      font-variation-settings: 'FILL' 1;
+    }
+  </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-gray-800 dark:text-gray-200">
+<div class="relative flex min-h-screen w-full">
+<aside class="flex w-64 flex-col border-r border-gray-200/10 bg-white/5 dark:bg-black/20 p-4">
+<div class="flex flex-col gap-4">
+<div class="flex items-center gap-3">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10" data-alt="User avatar with abstract background" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDZO07A9utRVg8DOGkCWLjaggkJFdlvfTgpSYbWe6niS8mbciiGFazcLBHcv_ldvc1YcjWQpshROdJtQD7rvIGNcTRl4RfzDucZMY_o1zn3i9NC2mNpXfrAxy6-RHtWFHknHwmy8OI-0wZeTZoOgREdHjs_UJsdalN5DohBRtZGxy2xKpcRxoMzREmvMAEbyCwcWnM1pEtHeD9E-RGrkdpKC6NI4ZRBtiMvGob_jevDeRP2u8-bZQJeZZNAUA0WOECcbkvqJkGeWRlE");'></div>
+<div class="flex flex-col">
+<h1 class="text-white text-base font-medium leading-normal">Aria Starr</h1>
+<p class="text-gray-400 dark:text-gray-500 text-sm font-normal leading-normal">Personal AI Universe</p>
+</div>
+</div>
+<nav class="mt-4 flex flex-col gap-2">
+<a class="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-700 hover:bg-primary/20 hover:text-primary dark:text-gray-300 dark:hover:text-white" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<p class="text-sm font-medium leading-normal">Dashboard</p>
+</a>
+<a class="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-700 hover:bg-primary/20 hover:text-primary dark:text-gray-300 dark:hover:text-white" href="#">
+<span class="material-symbols-outlined">auto_awesome</span>
+<p class="text-sm font-medium leading-normal">Creations</p>
+</a>
+<a class="flex items-center gap-3 rounded-lg bg-primary/20 px-3 py-2 text-primary dark:text-white" href="#">
+<span class="material-symbols-outlined fill">notifications</span>
+<p class="text-sm font-medium leading-normal">Notifications</p>
+</a>
+<a class="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-700 hover:bg-primary/20 hover:text-primary dark:text-gray-300 dark:hover:text-white" href="#">
+<span class="material-symbols-outlined">bar_chart</span>
+<p class="text-sm font-medium leading-normal">Analytics</p>
+</a>
+<a class="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-700 hover:bg-primary/20 hover:text-primary dark:text-gray-300 dark:hover:text-white" href="#">
+<span class="material-symbols-outlined">draw</span>
+<p class="text-sm font-medium leading-normal">Studio</p>
+</a>
+</nav>
+</div>
+<div class="mt-auto flex flex-col gap-1">
+<a class="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-700 hover:bg-primary/20 hover:text-primary dark:text-gray-300 dark:hover:text-white" href="#">
+<span class="material-symbols-outlined">settings</span>
+<p class="text-sm font-medium leading-normal">Settings</p>
+</a>
+<a class="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-700 hover:bg-primary/20 hover:text-primary dark:text-gray-300 dark:hover:text-white" href="#">
+<span class="material-symbols-outlined">help</span>
+<p class="text-sm font-medium leading-normal">Help</p>
+</a>
+</div>
+</aside>
+<main class="flex-1 overflow-y-auto">
+<div class="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
+<div class="flex flex-wrap items-center justify-between gap-4 border-b border-gray-200/10 pb-6">
+<h1 class="text-3xl font-black leading-tight tracking-[-0.033em] text-gray-900 dark:text-white">Notifications &amp; Time Engine</h1>
+<button class="flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-gray-200 text-gray-800 hover:bg-gray-300 dark:bg-white/10 dark:text-white dark:hover:bg-white/20 text-sm font-bold leading-normal tracking-[0.015em]">
+<span class="truncate">Mark all as read</span>
+</button>
+</div>
+<div class="mt-6 flex flex-col gap-6">
+<div class="rounded-xl border border-gray-200/10 bg-white/5 dark:bg-black/20 p-6">
+<h2 class="text-lg font-bold text-gray-900 dark:text-white">Silence by Design</h2>
+<p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Select a mode to automatically adjust notifications to your current intent.</p>
+<div class="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+<div class="cursor-pointer rounded-lg border-2 border-primary bg-primary/10 p-4 transition-all hover:bg-primary/20">
+<div class="flex items-center justify-between">
+<h3 class="font-bold text-primary">Focus</h3>
+<span class="material-symbols-outlined text-primary">target</span>
+</div>
+<p class="mt-2 text-xs text-gray-700 dark:text-gray-300">Only critical alerts for ongoing tasks and direct mentions.</p>
+</div>
+<div class="cursor-pointer rounded-lg border border-gray-200/10 bg-transparent p-4 transition-all hover:bg-white/5 dark:hover:bg-black/20">
+<div class="flex items-center justify-between">
+<h3 class="font-bold text-gray-900 dark:text-white">Recovery</h3>
+<span class="material-symbols-outlined text-gray-400">self_improvement</span>
+</div>
+<p class="mt-2 text-xs text-gray-500 dark:text-gray-400">Minimal notifications. Pauses non-essential updates.</p>
+</div>
+<div class="cursor-pointer rounded-lg border border-gray-200/10 bg-transparent p-4 transition-all hover:bg-white/5 dark:hover:bg-black/20">
+<div class="flex items-center justify-between">
+<h3 class="font-bold text-gray-900 dark:text-white">Exploration</h3>
+<span class="material-symbols-outlined text-gray-400">explore</span>
+</div>
+<p class="mt-2 text-xs text-gray-500 dark:text-gray-400">Enables discovery-related notifications from your Sage.</p>
+</div>
+<div class="cursor-pointer rounded-lg border border-gray-200/10 bg-transparent p-4 transition-all hover:bg-white/5 dark:hover:bg-black/20">
+<div class="flex items-center justify-between">
+<h3 class="font-bold text-gray-900 dark:text-white">Monetization</h3>
+<span class="material-symbols-outlined text-gray-400">monitoring</span>
+</div>
+<p class="mt-2 text-xs text-gray-500 dark:text-gray-400">Prioritizes sales, royalties, and market-related updates.</p>
+</div>
+</div>
+</div>
+<div class="flex flex-col gap-4">
+<label class="flex h-12 w-full flex-col">
+<div class="flex h-full w-full flex-1 items-stretch rounded-lg">
+<div class="text-gray-400 dark:text-gray-500 flex items-center justify-center rounded-l-lg border border-r-0 border-gray-200/20 bg-white/5 pl-4 dark:bg-black/20">
+<span class="material-symbols-outlined">search</span>
+</div>
+<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-r-lg border border-l-0 border-gray-200/20 bg-white/5 px-4 text-base font-normal leading-normal text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary/50 dark:bg-black/20 dark:text-white dark:placeholder:text-gray-500" placeholder="Search notifications" value=""/>
+</div>
+</label>
+<div class="flex flex-wrap gap-3">
+<button class="flex h-8 shrink-0 cursor-pointer items-center justify-center gap-x-2 rounded-full bg-primary px-4">
+<p class="text-sm font-medium leading-normal text-white">All</p>
+</button>
+<button class="flex h-8 shrink-0 cursor-pointer items-center justify-center gap-x-2 rounded-full bg-gray-200 px-4 hover:bg-gray-300 dark:bg-white/10 dark:hover:bg-white/20">
+<p class="text-sm font-medium leading-normal text-gray-800 dark:text-white">Creations</p>
+</button>
+<button class="flex h-8 shrink-0 cursor-pointer items-center justify-center gap-x-2 rounded-full bg-gray-200 px-4 hover:bg-gray-300 dark:bg-white/10 dark:hover:bg-white/20">
+<p class="text-sm font-medium leading-normal text-gray-800 dark:text-white">Sales &amp; Royalties</p>
+</button>
+<button class="flex h-8 shrink-0 cursor-pointer items-center justify-center gap-x-2 rounded-full bg-gray-200 px-4 hover:bg-gray-300 dark:bg-white/10 dark:hover:bg-white/20">
+<p class="text-sm font-medium leading-normal text-gray-800 dark:text-white">Sage Discoveries</p>
+</button>
+<button class="flex h-8 shrink-0 cursor-pointer items-center justify-center gap-x-2 rounded-full bg-gray-200 px-4 hover:bg-gray-300 dark:bg-white/10 dark:hover:bg-white/20">
+<p class="text-sm font-medium leading-normal text-gray-800 dark:text-white">Reminders</p>
+</button>
+</div>
+</div>
+<div class="flex flex-col divide-y divide-gray-200/10">
+<div class="flex items-center gap-4 px-2 py-4 justify-between transition-colors hover:bg-gray-500/5">
+<div class="flex items-start gap-4 flex-1">
+<div class="text-gray-600 dark:text-gray-300 flex items-center justify-center rounded-lg bg-gray-200/80 dark:bg-white/10 shrink-0 size-12">
+<span class="material-symbols-outlined">auto_awesome</span>
+</div>
+<div class="flex flex-1 flex-col justify-center gap-1">
+<p class="text-base font-medium leading-normal text-gray-900 dark:text-white">Your 'Project Nebula' art piece has finished rendering.</p>
+<p class="text-sm font-normal leading-normal text-gray-500 dark:text-gray-400">The final high-resolution version is now available in your studio.</p>
+<p class="text-xs font-normal leading-normal text-gray-400 dark:text-gray-500">5 minutes ago</p>
+</div>
+</div>
+<div class="shrink-0 flex items-center gap-4">
+<button class="text-sm font-medium leading-normal text-primary hover:underline">View Creation</button>
+<div class="w-2.5 h-2.5 rounded-full bg-primary" data-alt="Unread status indicator"></div>
+</div>
+</div>
+<div class="flex items-center gap-4 px-2 py-4 justify-between transition-colors hover:bg-gray-500/5">
+<div class="flex items-start gap-4 flex-1">
+<div class="text-gray-600 dark:text-gray-300 flex items-center justify-center rounded-lg bg-gray-200/80 dark:bg-white/10 shrink-0 size-12">
+<span class="material-symbols-outlined">paid</span>
+</div>
+<div class="flex flex-1 flex-col justify-center gap-1">
+<p class="text-base font-medium leading-normal text-gray-900 dark:text-white">You've earned $25 in royalties this week.</p>
+<p class="text-sm font-normal leading-normal text-gray-500 dark:text-gray-400">Your total earnings for the month are now $128.</p>
+<p class="text-xs font-normal leading-normal text-gray-400 dark:text-gray-500">2 hours ago</p>
+</div>
+</div>
+<div class="shrink-0 flex items-center gap-4">
+<button class="text-sm font-medium leading-normal text-primary hover:underline">See Sales Report</button>
+<div class="w-2.5 h-2.5 rounded-full bg-primary" data-alt="Unread status indicator"></div>
+</div>
+</div>
+<div class="flex items-center gap-4 px-2 py-4 justify-between transition-colors hover:bg-gray-500/5">
+<div class="flex items-start gap-4 flex-1">
+<div class="text-gray-600 dark:text-gray-300 flex items-center justify-center rounded-lg bg-gray-200/80 dark:bg-white/10 shrink-0 size-12">
+<span class="material-symbols-outlined">psychology</span>
+</div>
+<div class="flex flex-1 flex-col justify-center gap-1">
+<p class="text-base font-medium leading-normal text-gray-900 dark:text-white">Sage found a new article relevant to your 'Quantum Computing' research.</p>
+<p class="text-sm font-normal leading-normal text-gray-500 dark:text-gray-400">"The Entanglement of Qubits in Cryogenic Environments"</p>
+<p class="text-xs font-normal leading-normal text-gray-400 dark:text-gray-500">Yesterday</p>
+</div>
+</div>
+<div class="shrink-0 flex items-center gap-4">
+<button class="text-sm font-medium leading-normal text-primary hover:underline">View Discovery</button>
+<div class="w-2.5 h-2.5 rounded-full bg-transparent" data-alt="Read status indicator"></div>
+</div>
+</div>
+<div class="flex items-center gap-4 px-2 py-4 justify-between transition-colors hover:bg-gray-500/5">
+<div class="flex items-start gap-4 flex-1">
+<div class="text-gray-600 dark:text-gray-300 flex items-center justify-center rounded-lg bg-gray-200/80 dark:bg-white/10 shrink-0 size-12">
+<span class="material-symbols-outlined">alarm</span>
+</div>
+<div class="flex flex-1 flex-col justify-center gap-1">
+<p class="text-base font-medium leading-normal text-gray-900 dark:text-white">Based on your calendar, you should start preparing for the 'Client Pitch' now.</p>
+<p class="text-sm font-normal leading-normal text-gray-500 dark:text-gray-400">The meeting is scheduled for tomorrow at 10:00 AM.</p>
+<p class="text-xs font-normal leading-normal text-gray-400 dark:text-gray-500">Yesterday</p>
+</div>
+</div>
+<div class="shrink-0 flex items-center gap-4">
+<button class="text-sm font-medium leading-normal text-primary hover:underline">Open Calendar</button>
+<div class="w-2.5 h-2.5 rounded-full bg-transparent" data-alt="Read status indicator"></div>
+</div>
+</div>
+<div class="hidden flex-col items-center justify-center gap-4 py-20 text-center">
+<div class="flex h-20 w-20 items-center justify-center rounded-full bg-gray-200/80 dark:bg-white/10">
+<span class="material-symbols-outlined text-4xl text-gray-500 dark:text-gray-400">notifications_paused</span>
+</div>
+<div class="flex flex-col gap-1">
+<h3 class="text-lg font-semibold text-gray-900 dark:text-white">All caught up</h3>
+<p class="text-sm text-gray-500 dark:text-gray-400">Your AI universe is quiet for now. New notifications will appear here.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+
+</body></html>
