@@ -970,7 +970,19 @@ export default function PlaygroundPage() {
                                   <div className="bg-black/50 border border-cyan-500/30 rounded-xl overflow-hidden">
                                     <div className="flex items-center justify-between px-4 py-2 bg-cyan-500/10 border-b border-cyan-500/30">
                                       <span className="text-xs text-cyan-400 font-mono">Code</span>
-                                      <button className="text-xs text-cyan-400 hover:text-cyan-300">Copy</button>
+                                      <button
+                                        onClick={() => {
+                                          const codeText = msg.content.split("```")[1]?.split("```")[0] || msg.content
+                                          navigator.clipboard.writeText(codeText).then(() => {
+                                            showSuccess("Code copied to clipboard!", 2000)
+                                          }).catch(() => {
+                                            showError("Failed to copy code")
+                                          })
+                                        }}
+                                        className="text-xs text-cyan-400 hover:text-cyan-300"
+                                      >
+                                        Copy
+                                      </button>
                                     </div>
                                     <pre className="p-4 text-xs font-mono text-slate-300 overflow-x-auto">
                                       {msg.content.split("```")[1]?.split("```")[0] || msg.content}
@@ -1180,11 +1192,19 @@ export default function PlaygroundPage() {
                   <div className="flex gap-3">
                     <Input
                       value={input}
-                      onChange={(e) => setInput(e.target.value)}
-                      onKeyPress={(e) => {
+                      onChange={(e) => {
+                        // Clear any error when user starts typing
+                        if (error) {
+                          setError(null)
+                        }
+                        setInput(e.target.value)
+                      }}
+                      onKeyDown={(e) => {
                         if (e.key === "Enter" && !e.shiftKey) {
                           e.preventDefault()
-                          sendMessage()
+                          if (!loading) {
+                            sendMessage()
+                          }
                         }
                       }}
                       placeholder={
