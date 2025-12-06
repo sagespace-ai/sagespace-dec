@@ -368,6 +368,61 @@ export default function PlaygroundPage() {
     }
   }
 
+  const handleAcceptQuest = async (questId: string, questTitle: string, rewardXp: number = 100) => {
+    try {
+      const response = await fetch("/api/quests/accept", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          questId,
+          conversationId: currentConversationId,
+        }),
+      })
+
+      const data = await response.json()
+
+      if (!data.ok) {
+        throw new Error(data.error || "Failed to accept quest")
+      }
+
+      // Update quest status in the message metadata
+      setMessages((prev) =>
+        prev.map((msg) => {
+          if (msg.type === "quest" && msg.metadata?.quests) {
+            const updatedQuests = (msg.metadata.quests as Array<{ id: string; status?: string }>).map((q) =>
+              q.id === questId ? { ...q, status: "accepted" } : q
+            )
+            return {
+              ...msg,
+              metadata: { ...msg.metadata, quests: updatedQuests },
+            }
+          }
+          if (msg.type === "quest" && msg.metadata?.questId === questId) {
+            return {
+              ...msg,
+              metadata: { ...msg.metadata, status: "accepted" },
+            }
+          }
+          return msg
+        })
+      )
+
+      // Award XP
+      setStats((prev) => ({
+        ...prev,
+        xpEarned: prev.xpEarned + rewardXp,
+      }))
+
+      showSuccess(`Quest "${questTitle}" accepted! +${rewardXp} XP`, 4000)
+      console.log("[playground] Quest accepted:", questId)
+    } catch (error) {
+      console.error("[playground] Quest acceptance failed:", error)
+      const errorMsg = "Failed to accept quest. Please try again."
+      setError(errorMsg)
+      showError(errorMsg)
+    }
+  }
+
   const handleAudioClick = async () => {
     if (isRecordingAudio) {
       // Stop recording
@@ -928,27 +983,34 @@ export default function PlaygroundPage() {
                                   {msg.metadata?.quests && Array.isArray(msg.metadata.quests) ? (
                                     // Multiple quests created
                                     <div className="space-y-2">
-                                      {msg.metadata.quests.map((quest: { id: string; title: string; rewardXp?: number }) => (
-                                        <div
-                                          key={quest.id}
-                                          className="bg-gradient-to-br from-yellow-500/10 to-orange-500/10 border-2 border-yellow-500/30 rounded-xl p-4"
-                                        >
-                                          <div className="flex items-start justify-between mb-3">
-                                            <div>
-                                              <div className="text-lg font-bold text-yellow-400 mb-1">
-                                                🎯 {quest.title}
+                                      {msg.metadata.quests.map((quest: { id: string; title: string; rewardXp?: number; status?: string }) => {
+                                        const isAccepted = quest.status === "accepted"
+                                        return (
+                                          <div
+                                            key={quest.id}
+                                            className="bg-gradient-to-br from-yellow-500/10 to-orange-500/10 border-2 border-yellow-500/30 rounded-xl p-4"
+                                          >
+                                            <div className="flex items-start justify-between mb-3">
+                                              <div>
+                                                <div className="text-lg font-bold text-yellow-400 mb-1">
+                                                  🎯 {quest.title}
+                                                </div>
+                                                <div className="text-xs text-slate-400">Quest created by {selectedSage}</div>
                                               </div>
-                                              <div className="text-xs text-slate-400">Quest created by {selectedSage}</div>
+                                              <div className="text-sm font-bold text-yellow-400">
+                                                +{quest.rewardXp || 100} XP
+                                              </div>
                                             </div>
-                                            <div className="text-sm font-bold text-yellow-400">
-                                              +{quest.rewardXp || 100} XP
-                                            </div>
+                                            <button
+                                              onClick={() => handleAcceptQuest(quest.id, quest.title, quest.rewardXp || 100)}
+                                              className="w-full py-2 bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-400 hover:to-orange-400 rounded-lg font-semibold text-sm transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+                                              disabled={isAccepted}
+                                            >
+                                              {isAccepted ? "✓ Quest Accepted" : "Accept Quest"}
+                                            </button>
                                           </div>
-                                          <button className="w-full py-2 bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-400 hover:to-orange-400 rounded-lg font-semibold text-sm transition-all duration-300 hover:scale-105">
-                                            Accept Quest
-                                          </button>
-                                        </div>
-                                      ))}
+                                        )
+                                      })}
                                     </div>
                                   ) : (
                                     // Single quest (fallback)
