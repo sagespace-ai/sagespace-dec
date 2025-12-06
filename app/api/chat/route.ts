@@ -1,6 +1,7 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { createClient } from "@/lib/supabase/server"
 import { generateChatCompletion } from "@/lib/llm"
+import { generateStructuredChatCompletion } from "@/lib/llm-structured"
 import { debitCredits, tokensToCredits } from "@/lib/credits"
 import { awardXP } from "@/lib/xp"
 import { createConversation, getConversation, addMessage } from "@/lib/conversations"
@@ -11,6 +12,7 @@ import { z } from "zod"
 import { DEMO_MODE } from "@/lib/demo"
 import type { ChatMessage } from "@/types"
 import type OpenAI from "openai"
+import type { AgentOutput } from "@/lib/types/agent"
 
 const chatSchema = z.object({
   conversationId: z.string().optional(),
@@ -99,62 +101,124 @@ Respond naturally and conversationally, staying true to your role as ${sageTempl
     // Save user message
     await addMessage(conversation.id, "user", userMessage)
 
-    // Generate AI response
-    const completion = await generateChatCompletion(messages, {
-      stream: false,
+    // Generate AI response with structured output (function calling)
+    const agentOutput: AgentOutput = await generateStructuredChatCompletion(messages, {})
+
+    const assistantMessage = agentOutput.text
+    const createdArtifacts: Array<{ id: string; name: string }> = []
+    const createdQuests: Array<{ id: string; title: string }> = []
+
+    // Process agent-created artifacts
+    if (agentOutput.artifacts && agentOutput.artifacts.length > 0) {
+      for (const artifact of agentOutput.artifacts) {
+        try {
+          const response = await fetch(`${request.nextUrl.origin}/api/artifacts/agent`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              conversationId: conversation.id,
+              sageId: personaId || "unknown",
+              artifact,
+            }),
+          })
+
+          if (response.ok) {
+            const data = await response.json()
+            if (data.ok && data.data?.id) {
+              createdArtifacts.push({
+                id: data.data.id,
+                name: artifact.name,
+              })
+            }
+          }
+        } catch (error) {
+          console.error("[chat] Failed to create artifact:", error)
+        }
+      }
+    }
+
+    // Process agent-created quests
+    if (agentOutput.quests && agentOutput.quests.length > 0) {
+      for (const quest of agentOutput.quests) {
+        try {
+          const response = await fetch(`${request.nextUrl.origin}/api/quests/agent`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              conversationId: conversation.id,
+              sageId: personaId || "unknown",
+              quest,
+            }),
+          })
+
+          if (response.ok) {
+            const data = await response.json()
+            if (data.ok && data.data?.id) {
+              createdQuests.push({
+                id: data.data.id,
+                title: quest.title,
+              })
+            }
+          }
+        } catch (error) {
+          console.error("[chat] Failed to create quest:", error)
+        }
+      }
+    }
+
+    // Estimate tokens (function calling may have different token usage)
+    // For now, use a simple estimate based on message length
+    const estimatedTokens = assistantMessage.length / 4
+    const tokensIn = Math.floor(estimatedTokens * 0.6)
+    const tokensOut = Math.floor(estimatedTokens * 0.4)
+    const totalTokens = tokensIn + tokensOut
+
+    // Save assistant message
+    const messageRecord = await addMessage(conversation.id, "assistant", assistantMessage, {
+      tokensIn,
+      tokensOut,
     })
 
-    // Type guard: since stream is false, this should be ChatCompletion, not Stream
-    if ('choices' in completion && Array.isArray(completion.choices)) {
-      const chatCompletion = completion as OpenAI.ChatCompletion
-      const assistantMessage = chatCompletion.choices[0]?.message?.content || ""
-      const tokensIn = chatCompletion.usage?.prompt_tokens || 0
-      const tokensOut = chatCompletion.usage?.completion_tokens || 0
-      const totalTokens = tokensIn + tokensOut
+    // Calculate and debit credits
+    const creditsRequired = tokensToCredits(totalTokens)
+    const debitResult = await debitCredits(userId, creditsRequired, "chat", {
+      conversationId: conversation.id,
+      tokens: totalTokens,
+    })
 
-      // Save assistant message
-      const messageRecord = await addMessage(conversation.id, "assistant", assistantMessage, {
-        tokensIn,
-        tokensOut,
-      })
-
-      // Calculate and debit credits
-      const creditsRequired = tokensToCredits(totalTokens)
-      const debitResult = await debitCredits(userId, creditsRequired, "chat", {
-        conversationId: conversation.id,
-        tokens: totalTokens,
-      })
-
-      if (!debitResult.success) {
-        // Delete the messages if we couldn't charge
-        return NextResponse.json({ ok: false, error: debitResult.error }, { status: 402 })
-      }
-
-      // Award XP
-      await awardXP(userId, "chat_turn")
-
-      // Log event
-      await logEvent({
-        type: "chat_turn",
-        userId: userId,
-        timestamp: Date.now(),
-        props: { personaId, tokens: totalTokens },
-      })
-
-      return NextResponse.json({
-        ok: true,
-        data: {
-          conversationId: conversation.id,
-          messageId: messageRecord.id,
-          assistantMessage,
-          tokens: { input: tokensIn, output: tokensOut },
-          creditsCharged: creditsRequired,
-          artifacts: [],
-        },
-      })
-    } else {
-      return NextResponse.json({ ok: false, error: "Unexpected response format" }, { status: 500 })
+    if (!debitResult.success) {
+      // Delete the messages if we couldn't charge
+      return NextResponse.json({ ok: false, error: debitResult.error }, { status: 402 })
     }
+
+    // Award XP
+    await awardXP(userId, "chat_turn")
+
+    // Log event
+    await logEvent({
+      type: "chat_turn",
+      userId: userId,
+      timestamp: Date.now(),
+      props: { personaId, tokens: totalTokens, artifactsCreated: createdArtifacts.length, questsCreated: createdQuests.length },
+    })
+
+    return NextResponse.json({
+      ok: true,
+      data: {
+        conversationId: conversation.id,
+        messageId: messageRecord.id,
+        assistantMessage,
+        tokens: { input: tokensIn, output: tokensOut },
+        creditsCharged: creditsRequired,
+        artifacts: createdArtifacts,
+        quests: createdQuests,
+        agentOutput: {
+          hasArtifacts: (agentOutput.artifacts?.length || 0) > 0,
+          hasQuests: (agentOutput.quests?.length || 0) > 0,
+          hasImages: (agentOutput.images?.length || 0) > 0,
+        },
+      },
+    })
   } catch (error) {
     console.error("[chat] POST error:", error)
     return NextResponse.json({ ok: false, error: "Failed to process chat" }, { status: 500 })

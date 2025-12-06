@@ -512,12 +512,39 @@ export default function PlaygroundPage() {
         type: "text",
       }
 
-      // Check if response contains special content
-      if (assistantContent.includes("```")) {
+      // Check if agent created artifacts or quests
+      const createdArtifacts = data.data?.artifacts || []
+      const createdQuests = data.data?.quests || []
+      const agentOutput = data.data?.agentOutput
+
+      // If agent created artifacts, mark message as artifact type
+      if (createdArtifacts.length > 0) {
+        messageData.type = "artifact"
+        messageData.metadata = {
+          artifactType: createdArtifacts[0].name,
+          artifacts: createdArtifacts,
+          shareLink: `/artifacts/${createdArtifacts[0].id}`,
+        }
+      }
+
+      // If agent created quests, mark message as quest type
+      if (createdQuests.length > 0) {
+        messageData.type = "quest"
+        messageData.metadata = {
+          questTitle: createdQuests[0].title,
+          quests: createdQuests,
+          reward: `+${createdQuests[0].rewardXp || 100} XP`,
+          difficulty: "Medium",
+        }
+      }
+
+      // Check if response contains special content (fallback detection)
+      if (!messageData.metadata && assistantContent.includes("```")) {
         messageData.type = "code"
       } else if (
-        assistantContent.toLowerCase().includes("quest") ||
-        assistantContent.toLowerCase().includes("challenge")
+        !messageData.metadata &&
+        (assistantContent.toLowerCase().includes("quest") ||
+          assistantContent.toLowerCase().includes("challenge"))
       ) {
         messageData.type = "quest"
         messageData.metadata = {
@@ -526,8 +553,9 @@ export default function PlaygroundPage() {
           difficulty: "Medium",
         }
       } else if (
-        assistantContent.toLowerCase().includes("artifact") ||
-        assistantContent.toLowerCase().includes("created")
+        !messageData.metadata &&
+        (assistantContent.toLowerCase().includes("artifact") ||
+          assistantContent.toLowerCase().includes("created"))
       ) {
         messageData.type = "artifact"
         messageData.metadata = {
@@ -537,6 +565,18 @@ export default function PlaygroundPage() {
       }
 
       setMessages((prev) => [...prev, messageData])
+
+      // Show notification if agent created content
+      if (createdArtifacts.length > 0 || createdQuests.length > 0) {
+        const notifications = []
+        if (createdArtifacts.length > 0) {
+          notifications.push(`${createdArtifacts.length} artifact${createdArtifacts.length > 1 ? "s" : ""} created`)
+        }
+        if (createdQuests.length > 0) {
+          notifications.push(`${createdQuests.length} quest${createdQuests.length > 1 ? "s" : ""} created`)
+        }
+        console.log("[playground] Agent created:", notifications.join(", "))
+      }
 
       // Update stats with actual values from API if available
       if (data.data?.tokens) {
