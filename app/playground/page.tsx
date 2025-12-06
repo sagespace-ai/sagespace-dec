@@ -1044,7 +1044,10 @@ export default function PlaygroundPage() {
                                         onClick={() => {
                                           // Extract quest info from metadata
                                           const questId = msg.metadata?.questId || `quest-${Date.now()}`
-                                          const questTitle = (msg.metadata?.questTitle as string) || "Quest"
+                                          let questTitle = "Quest"
+                                          if (typeof msg.metadata?.questTitle === "string") {
+                                            questTitle = msg.metadata.questTitle
+                                          }
                                           // Parse reward XP from string like "+50 XP" or number
                                           let rewardXp = 100
                                           if (typeof msg.metadata?.reward === "string") {
