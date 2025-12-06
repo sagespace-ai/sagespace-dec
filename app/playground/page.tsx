@@ -33,7 +33,7 @@ import {
 } from "@/lib/playground/multimodal"
 import { CodeEditorModal } from "@/components/playground/CodeEditorModal"
 import { QuestCreatorModal } from "@/components/playground/QuestCreatorModal"
-import { ToastContainer, useToast } from "@/components/ui/toast"
+import { PlaygroundToastContainer, usePlaygroundToast } from "@/components/playground/PlaygroundToast"
 
 type MessageType = "text" | "image" | "video" | "audio" | "code" | "artifact" | "quest"
 
@@ -104,7 +104,7 @@ export default function PlaygroundPage() {
   const [sageMode, setSageMode] = useState<SageMode>("single")
 
   // Toast notifications
-  const { toasts, showSuccess, showError, showInfo, dismissToast } = useToast()
+  const { toasts, showSuccess, showError, showInfo, dismissToast } = usePlaygroundToast()
 
   // Multimodal state
   const [showCodeEditor, setShowCodeEditor] = useState(false)
