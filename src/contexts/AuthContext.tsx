@@ -52,44 +52,41 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         try {
           initAuthSync()
         } catch (error) {
-          console.warn("Error initializing auth sync:", error)
-          // Continue anyway - auth sync is not critical for app to work
+          console.warn("[v0] Error initializing auth sync:", error)
         }
 
         try {
-          // Check for existing session with timeout
-          // Use a timeout that resolves gracefully instead of rejecting
           const sessionPromise = supabase.auth.getSession().catch((error) => {
-            console.warn("Error getting session:", error)
-            return { data: { session: null }, error }
+            console.warn("[v0] Error getting session:", error)
+            return { data: { session: null }, error: null }
           })
 
-          const timeoutPromise = new Promise<{ data: { session: null } }>((resolve) =>
-            setTimeout(() => resolve({ data: { session: null } }), 5000),
+          const timeoutPromise = new Promise<{ data: { session: null }; error: null }>((resolve) =>
+            setTimeout(() => {
+              console.warn("[v0] Session check timed out - continuing in guest mode")
+              resolve({ data: { session: null }, error: null })
+            }, 2000),
           )
 
           const result = (await Promise.race([sessionPromise, timeoutPromise])) as {
             data: { session: SessionData | null }
+            error: any
           }
 
           if (isMounted) {
-            if (result?.data?.session) {
+            if (result?.data?.session && !result.error) {
               try {
                 await loadUserProfile()
               } catch (error) {
-                console.warn("Error loading user profile:", error)
-                // Continue without user profile - app should still work
-                if (isMounted) {
-                  setLoading(false)
-                }
+                console.warn("[v0] Error loading user profile:", error)
+                setLoading(false)
               }
             } else {
               setLoading(false)
             }
           }
         } catch (error) {
-          console.warn("Error checking session:", error)
-          // Always set loading to false so app can continue
+          console.warn("[v0] Error checking session:", error)
           if (isMounted) {
             setLoading(false)
           }
@@ -107,14 +104,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 try {
                   await syncAuthToken()
                 } catch (error) {
-                  console.warn("Error syncing auth token:", error)
-                  // Continue - token sync failure shouldn't block app
+                  console.warn("[v0] Error syncing auth token:", error)
                 }
                 try {
                   await loadUserProfile()
                 } catch (error) {
-                  console.warn("Error loading user profile in auth change:", error)
-                  // Continue without user profile
+                  console.warn("[v0] Error loading user profile in auth change:", error)
+                  setLoading(false)
                 }
               } else {
                 setUser(null)
@@ -122,7 +118,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 setLoading(false)
               }
             } catch (error) {
-              console.warn("Error in auth state change handler:", error)
+              console.warn("[v0] Error in auth state change handler:", error)
               if (isMounted) {
                 setLoading(false)
               }
@@ -130,44 +126,55 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           })
           subscription = authSubscription
         } catch (error) {
-          console.warn("Error setting up auth listener:", error)
+          console.warn("[v0] Error setting up auth listener:", error)
           if (isMounted) {
             setLoading(false)
           }
         }
       } catch (error) {
-        console.error("Error initializing auth:", error)
-        // Always set loading to false so app can continue
+        console.error("[v0] Error initializing auth:", error)
         if (isMounted) {
           setLoading(false)
         }
       }
     }
 
-    initializeAuth()
+    initializeAuth().catch((error) => {
+      console.error("[v0] Fatal error in auth initialization:", error)
+      if (isMounted) {
+        setLoading(false)
+      }
+    })
 
     return () => {
       isMounted = false
       if (subscription) {
-        subscription.unsubscribe()
+        try {
+          subscription.unsubscribe()
+        } catch (error) {
+          console.warn("[v0] Error unsubscribing from auth:", error)
+        }
       }
     }
   }, [])
 
   const loadUserProfile = async () => {
     try {
-      // First, check if we have a Supabase session
       if (!supabase) {
+        console.warn("[v0] No Supabase client available")
         setLoading(false)
         return
       }
 
       let session = null
       try {
-        const sessionResult = await supabase.auth.getSession()
-        session = sessionResult?.data?.session || null
+        const sessionResult = await Promise.race([
+          supabase.auth.getSession(),
+          new Promise((_, reject) => setTimeout(() => reject(new Error("Session fetch timeout")), 2000)),
+        ])
+        session = (sessionResult as any)?.data?.session || null
       } catch (error) {
-        console.warn("Error getting session in loadUserProfile:", error)
+        console.warn("[v0] Error getting session in loadUserProfile:", error)
         setLoading(false)
         return
       }
@@ -178,13 +185,28 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return
       }
 
+      if (!import.meta.env.VITE_API_URL) {
+        console.log("[v0] No API URL configured, using session data only")
+        const sessionUser = session.user
+        setUser({
+          id: sessionUser.id,
+          name: sessionUser.user_metadata?.name || sessionUser.email?.split("@")[0] || "User",
+          email: sessionUser.email || "",
+          avatar: sessionUser.user_metadata?.avatar || null,
+          createdAt: new Date(sessionUser.created_at).toISOString(),
+          updatedAt: new Date().toISOString(),
+        })
+        setLoading(false)
+        return
+      }
+
       // Try to load user profile from API with timeout
       let data = null
       let error: string | undefined = undefined
 
       try {
         const apiCall = apiService.getMe().catch((err) => {
-          console.warn("API call failed in loadUserProfile:", err)
+          console.warn("[v0] API call failed in loadUserProfile:", err)
           return { data: null, error: err.message || "Failed to load user profile" }
         })
         const timeout = new Promise<{ data: null; error: string }>((resolve) =>
@@ -195,14 +217,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         data = result.data
         error = result.error
       } catch (err: any) {
-        console.warn("Error in loadUserProfile API call:", err)
+        console.warn("[v0] Error in loadUserProfile API call:", err)
         error = err.message || "Failed to load user profile"
       }
 
       if (error || !data) {
-        console.warn("Failed to load user profile from API, using session data:", error)
-        // If API fails, create a basic user object from the session
-        // This ensures the user can still access the app even if the profile endpoint fails
+        console.warn("[v0] Failed to load user profile from API, using session data:", error)
         const sessionUser = session.user
         setUser({
           id: sessionUser.id,
@@ -213,7 +233,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           updatedAt: new Date().toISOString(),
         })
       } else {
-        // Transform database user to frontend user format
         const userData = data as any
         setUser({
           id: userData.id,
@@ -225,10 +244,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         })
       }
     } catch (error) {
-      console.error("Error loading user profile:", error)
-      // Don't set user to null if we have a session - use session data as fallback
-      if (supabase) {
-        try {
+      console.error("[v0] Error loading user profile:", error)
+      try {
+        if (supabase) {
           const {
             data: { session },
           } = await supabase.auth.getSession()
@@ -245,10 +263,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           } else {
             setUser(null)
           }
-        } catch {
+        } else {
           setUser(null)
         }
-      } else {
+      } catch {
         setUser(null)
       }
     } finally {
@@ -294,7 +312,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         } catch (profileError: any) {
           // If profile loading fails, still consider login successful
           // User can still use the app with session data
-          console.warn("Error loading user profile after sign in:", profileError)
+          console.warn("[v0] Error loading user profile after sign in:", profileError)
           setLoading(false)
           // Don't throw - login was successful, profile loading is secondary
         }
@@ -386,7 +404,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       await supabase.auth.signOut()
     } catch (error) {
-      console.warn("Error signing out:", error)
+      console.warn("[v0] Error signing out:", error)
     } finally {
       setUser(null)
       localStorage.removeItem("auth_token")
