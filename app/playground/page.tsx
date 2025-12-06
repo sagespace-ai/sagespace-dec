@@ -107,6 +107,9 @@ export default function PlaygroundPage() {
   const [showQuestCreator, setShowQuestCreator] = useState(false)
   const [isRecordingAudio, setIsRecordingAudio] = useState(false)
   const [pendingImage, setPendingImage] = useState<File | null>(null)
+  const [pendingImageUrl, setPendingImageUrl] = useState<string | null>(null)
+  const [pendingAudioUrl, setPendingAudioUrl] = useState<string | null>(null)
+  const [pendingCode, setPendingCode] = useState<{ code: string; language: string } | null>(null)
 
   // mood, isDiscovering, showMoodSelector, hologramActive, particles, recentSages, trendingSages
   // showSageBrowser, allSages, sageSearchQuery, quickSearchQuery, loadingAllSages
@@ -304,7 +307,8 @@ export default function PlaygroundPage() {
         try {
           setPendingImage(file)
           const result = await uploadImage(file)
-          // Preview the image in input or attach to next message
+          // Store image URL for preview and attachment
+          setPendingImageUrl(result.url)
           setInput((prev) => `${prev} [Image: ${file.name}]`.trim())
           console.log("[playground] Image uploaded:", result.url)
         } catch (error) {
@@ -318,13 +322,28 @@ export default function PlaygroundPage() {
     input.click()
   }
 
+  const handleRemoveImage = () => {
+    if (pendingImageUrl) {
+      URL.revokeObjectURL(pendingImageUrl)
+    }
+    setPendingImageUrl(null)
+    setPendingImage(null)
+    setInput((prev) => prev.replace(/\[Image:.*?\]/g, "").trim())
+  }
+
   const handleCodeClick = () => {
     setShowCodeEditor(true)
   }
 
   const handleCodeSave = (code: string, language: string) => {
+    setPendingCode({ code, language })
     setInput((prev) => `${prev}\n\`\`\`${language}\n${code}\n\`\`\``.trim())
     console.log("[playground] Code saved:", { code, language })
+  }
+
+  const handleRemoveCode = () => {
+    setPendingCode(null)
+    setInput((prev) => prev.replace(/```[\s\S]*?```/g, "").trim())
   }
 
   const handleQuestCreate = async (quest: QuestCreationResult) => {
@@ -344,6 +363,7 @@ export default function PlaygroundPage() {
       if (audioRecorderRef.current && audioStreamRef.current) {
         try {
           const result = await stopAudioRecording(audioRecorderRef.current, audioStreamRef.current)
+          setPendingAudioUrl(result.url)
           setInput((prev) => `${prev} [Audio recorded]`.trim())
           console.log("[playground] Audio recorded:", result.url)
         } catch (error) {
@@ -368,6 +388,14 @@ export default function PlaygroundPage() {
         setError(error instanceof Error ? error.message : "Failed to start audio recording.")
       }
     }
+  }
+
+  const handleRemoveAudio = () => {
+    if (pendingAudioUrl) {
+      URL.revokeObjectURL(pendingAudioUrl)
+    }
+    setPendingAudioUrl(null)
+    setInput((prev) => prev.replace(/\[Audio recorded\]/g, "").trim())
   }
 
   const handleQuestClick = () => {
@@ -395,12 +423,39 @@ export default function PlaygroundPage() {
   }, [loading])
 
   const sendMessage = async () => {
-    if (!input.trim() || loading) return
+    if ((!input.trim() && !pendingImageUrl && !pendingAudioUrl && !pendingCode) || loading) return
 
-    const userMessage: Message = { role: "user", content: input, timestamp: new Date(), type: "text" }
-    setMessages((prev) => [...prev, userMessage])
+    // Build message with attachments
     const messageContent = input
+    const attachments: { image?: string; audio?: string; code?: { code: string; language: string } } = {}
+    
+    if (pendingImageUrl) attachments.image = pendingImageUrl
+    if (pendingAudioUrl) attachments.audio = pendingAudioUrl
+    if (pendingCode) attachments.code = pendingCode
+
+    const userMessage: Message = {
+      role: "user",
+      content: messageContent,
+      timestamp: new Date(),
+      type: pendingImageUrl ? "image" : pendingCode ? "code" : pendingAudioUrl ? "audio" : "text",
+      metadata: attachments,
+    }
+    
+    setMessages((prev) => [...prev, userMessage])
+    
+    // Clear input and attachments
     setInput("")
+    if (pendingImageUrl) {
+      URL.revokeObjectURL(pendingImageUrl)
+      setPendingImageUrl(null)
+    }
+    if (pendingAudioUrl) {
+      URL.revokeObjectURL(pendingAudioUrl)
+      setPendingAudioUrl(null)
+    }
+    setPendingCode(null)
+    setPendingImage(null)
+    
     setLoading(true)
     setError(null)
 
