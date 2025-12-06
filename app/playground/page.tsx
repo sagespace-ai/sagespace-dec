@@ -1310,7 +1310,19 @@ export default function PlaygroundPage() {
         .animate-slide-down {
           animation: slide-down 0.3s ease-out forwards;
         }
-      `}</style>
+      `}      </style>
+
+      {/* Modals */}
+      <CodeEditorModal
+        isOpen={showCodeEditor}
+        onClose={() => setShowCodeEditor(false)}
+        onSave={handleCodeSave}
+      />
+      <QuestCreatorModal
+        isOpen={showQuestCreator}
+        onClose={() => setShowQuestCreator(false)}
+        onCreate={handleQuestCreate}
+      />
     </div>
   )
 }
