@@ -239,9 +239,9 @@ export default function PlaygroundPage() {
         try {
           const response = await fetch(`/api/conversations/${savedConversationId}`)
           const data = await response.json()
-          if (data.ok && data.conversation?.messages) {
+          if (data.ok && data.data?.messages) {
             // Convert conversation messages to playground message format
-            const loadedMessages: Message[] = data.conversation.messages.map((m: { role: string; content: string; created_at: string }) => ({
+            const loadedMessages: Message[] = data.data.messages.map((m: { role: string; content: string; created_at: string }) => ({
               role: m.role,
               content: m.content,
               timestamp: new Date(m.created_at),
