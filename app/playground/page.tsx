@@ -258,7 +258,7 @@ export default function PlaygroundPage() {
     }
   }, [])
 
-  const handleSageSelected = (sage: SageSummary | SageSummary[]) => {
+  const handleSageSelected = useCallback((sage: SageSummary | SageSummary[]) => {
     if (Array.isArray(sage)) {
       const primary = sage[0]
       setSelectedSage(primary.name)
@@ -408,9 +408,9 @@ export default function PlaygroundPage() {
     const artifactUrl = `/artifacts/${artifactId}`
     window.open(artifactUrl, "_blank")
     showInfo(`Opening artifact "${artifactName}"...`, 2000)
-  }
+  }, [showInfo])
 
-  const handleShareArtifact = async (artifactId: string) => {
+  const handleShareArtifact = useCallback(async (artifactId: string) => {
     try {
       const shareUrl = `${window.location.origin}/artifacts/${artifactId}`
       await navigator.clipboard.writeText(shareUrl)
@@ -418,7 +418,7 @@ export default function PlaygroundPage() {
     } catch (error) {
       showError("Failed to copy link")
     }
-  }
+  }, [showSuccess, showError])
 
   const handleAcceptQuest = async (questId: string, questTitle: string, rewardXp: number = 100) => {
     try {
@@ -527,9 +527,9 @@ export default function PlaygroundPage() {
     setError(null)
     // Optionally clear input
     // setInput("")
-  }
+  }, [])
 
-  const handleRetry = () => {
+  const handleRetry = useCallback(() => {
     // Retry the last failed message
     if (messages.length > 0) {
       const lastUserMessage = [...messages].reverse().find((m) => m.role === "user")
@@ -539,7 +539,7 @@ export default function PlaygroundPage() {
         // The user can now click send again
       }
     }
-  }
+  }, [messages])
 
   // Loading timeout effect
   useEffect(() => {
@@ -754,7 +754,7 @@ export default function PlaygroundPage() {
     }
   }
 
-  const currentSage = sages.find((s) => s.name === selectedSage) || sages[0]
+  const currentSage = useMemo(() => sages.find((s) => s.name === selectedSage) || sages[0], [selectedSage, sages])
   // const recommended = getRecommendedSages() // Removed as getRecommendedSages is removed
 
   return (
