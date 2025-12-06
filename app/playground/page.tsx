@@ -222,6 +222,21 @@ export default function PlaygroundPage() {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
   }, [messages])
 
+  // Persist conversation ID to localStorage
+  useEffect(() => {
+    if (currentConversationId) {
+      localStorage.setItem("playground_conversation_id", currentConversationId)
+    }
+  }, [currentConversationId])
+
+  // Load conversation ID from localStorage on mount
+  useEffect(() => {
+    const savedConversationId = localStorage.getItem("playground_conversation_id")
+    if (savedConversationId) {
+      setCurrentConversationId(savedConversationId)
+    }
+  }, [])
+
   const handleSageSelected = (sage: SageSummary | SageSummary[]) => {
     if (Array.isArray(sage)) {
       const primary = sage[0]
@@ -493,6 +508,18 @@ export default function PlaygroundPage() {
     // setInput("")
   }
 
+  const handleRetry = () => {
+    // Retry the last failed message
+    if (messages.length > 0) {
+      const lastUserMessage = [...messages].reverse().find((m) => m.role === "user")
+      if (lastUserMessage) {
+        setInput(lastUserMessage.content)
+        setError(null)
+        // The user can now click send again
+      }
+    }
+  }
+
   // Loading timeout effect
   useEffect(() => {
     if (loading) {
@@ -596,9 +623,11 @@ export default function PlaygroundPage() {
         return
       }
 
-      // Update conversation ID if this is a new conversation
-      if (data.data?.conversationId && !currentConversationId) {
+      // Update conversation ID (always update if provided, in case it was recreated)
+      if (data.data?.conversationId) {
         setCurrentConversationId(data.data.conversationId)
+        // Also persist to localStorage
+        localStorage.setItem("playground_conversation_id", data.data.conversationId)
       }
 
       const messageData: Message = {
