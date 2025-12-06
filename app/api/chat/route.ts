@@ -108,28 +108,23 @@ Respond naturally and conversationally, staying true to your role as ${sageTempl
     const createdArtifacts: Array<{ id: string; name: string }> = []
     const createdQuests: Array<{ id: string; title: string }> = []
 
-    // Process agent-created artifacts
+    // Process agent-created artifacts (call directly instead of fetch)
     if (agentOutput.artifacts && agentOutput.artifacts.length > 0) {
+      const { createAgentArtifact } = await import("@/lib/artifacts-agent")
       for (const artifact of agentOutput.artifacts) {
         try {
-          const response = await fetch(`${request.nextUrl.origin}/api/artifacts/agent`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              conversationId: conversation.id,
-              sageId: personaId || "unknown",
-              artifact,
-            }),
+          const result = await createAgentArtifact({
+            userId,
+            conversationId: conversation.id,
+            sageId: personaId || "unknown",
+            artifact,
           })
 
-          if (response.ok) {
-            const data = await response.json()
-            if (data.ok && data.data?.id) {
-              createdArtifacts.push({
-                id: data.data.id,
-                name: artifact.name,
-              })
-            }
+          if (result.ok && result.data?.id) {
+            createdArtifacts.push({
+              id: result.data.id,
+              name: artifact.name,
+            })
           }
         } catch (error) {
           console.error("[chat] Failed to create artifact:", error)
@@ -137,28 +132,23 @@ Respond naturally and conversationally, staying true to your role as ${sageTempl
       }
     }
 
-    // Process agent-created quests
+    // Process agent-created quests (call directly instead of fetch)
     if (agentOutput.quests && agentOutput.quests.length > 0) {
+      const { createAgentQuest } = await import("@/lib/quests-agent")
       for (const quest of agentOutput.quests) {
         try {
-          const response = await fetch(`${request.nextUrl.origin}/api/quests/agent`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              conversationId: conversation.id,
-              sageId: personaId || "unknown",
-              quest,
-            }),
+          const result = await createAgentQuest({
+            userId,
+            conversationId: conversation.id,
+            sageId: personaId || "unknown",
+            quest,
           })
 
-          if (response.ok) {
-            const data = await response.json()
-            if (data.ok && data.data?.id) {
-              createdQuests.push({
-                id: data.data.id,
-                title: quest.title,
-              })
-            }
+          if (result.ok && result.data?.id) {
+            createdQuests.push({
+              id: result.data.id,
+              title: quest.title,
+            })
           }
         } catch (error) {
           console.error("[chat] Failed to create quest:", error)

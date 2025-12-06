@@ -1,8 +1,7 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { createClient } from "@/lib/supabase/server"
-import { nanoid } from "nanoid"
 import { z } from "zod"
-import type { QuestDraft } from "@/lib/types/agent"
+import { createAgentQuest } from "@/lib/quests-agent"
 
 const agentQuestSchema = z.object({
   conversationId: z.string().optional(),
@@ -40,28 +39,21 @@ export async function POST(request: NextRequest) {
 
     const { conversationId, sageId, quest } = parsed.data
 
-    // Create quest
-    const questId = `quest-${nanoid()}`
-    const questData = {
-      id: questId,
+    // Create quest using server-side function
+    const result = await createAgentQuest({
       userId: user.id,
+      conversationId,
       sageId,
-      conversationId: conversationId || null,
-      title: quest.title,
-      description: quest.description,
-      goal: quest.goal,
-      rewardXp: quest.rewardXp || 100,
-      duration: quest.duration || 7,
-      status: "new" as const,
-      createdAt: new Date().toISOString(),
-    }
+      quest,
+    })
 
-    // TODO: Store in database when schema is ready
-    console.log("[quests/agent] Created quest:", questData)
+    if (!result.ok) {
+      return NextResponse.json({ ok: false, error: result.error }, { status: 500 })
+    }
 
     return NextResponse.json({
       ok: true,
-      data: questData,
+      data: result.data,
     })
   } catch (error) {
     console.error("[quests/agent] Error:", error)

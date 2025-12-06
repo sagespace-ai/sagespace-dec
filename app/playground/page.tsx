@@ -928,25 +928,54 @@ export default function PlaygroundPage() {
                               ) : msg.type === "artifact" ? (
                                 <div className="space-y-3">
                                   <p className="text-sm leading-relaxed mb-3">{msg.content}</p>
-                                  <div className="bg-gradient-to-br from-purple-500/10 to-pink-500/10 border-2 border-purple-500/30 rounded-xl p-4">
-                                    <div className="flex items-center gap-3 mb-3">
-                                      <div className="text-3xl">✨</div>
-                                      <div className="flex-1">
-                                        <div className="font-bold text-purple-400">
-                                          {msg.metadata?.artifactType || "Artifact Created"}
+                                  {msg.metadata?.artifacts && Array.isArray(msg.metadata.artifacts) ? (
+                                    // Multiple artifacts created
+                                    <div className="space-y-2">
+                                      {msg.metadata.artifacts.map((artifact: { id: string; name: string }) => (
+                                        <div
+                                          key={artifact.id}
+                                          className="bg-gradient-to-br from-purple-500/10 to-pink-500/10 border-2 border-purple-500/30 rounded-xl p-4"
+                                        >
+                                          <div className="flex items-center gap-3 mb-3">
+                                            <div className="text-3xl">✨</div>
+                                            <div className="flex-1">
+                                              <div className="font-bold text-purple-400">{artifact.name}</div>
+                                              <div className="text-xs text-slate-400">Artifact created by {selectedSage}</div>
+                                            </div>
+                                          </div>
+                                          <div className="flex gap-2">
+                                            <button className="flex-1 py-2 bg-purple-500/20 hover:bg-purple-500/30 border border-purple-500/50 rounded-lg text-sm transition-all">
+                                              View Artifact
+                                            </button>
+                                            <button className="flex-1 py-2 bg-cyan-500/20 hover:bg-cyan-500/30 border border-cyan-500/50 rounded-lg text-sm transition-all">
+                                              Share
+                                            </button>
+                                          </div>
                                         </div>
-                                        <div className="text-xs text-slate-400">Saved to your knowledge vault</div>
+                                      ))}
+                                    </div>
+                                  ) : (
+                                    // Single artifact (fallback)
+                                    <div className="bg-gradient-to-br from-purple-500/10 to-pink-500/10 border-2 border-purple-500/30 rounded-xl p-4">
+                                      <div className="flex items-center gap-3 mb-3">
+                                        <div className="text-3xl">✨</div>
+                                        <div className="flex-1">
+                                          <div className="font-bold text-purple-400">
+                                            {msg.metadata?.artifactType || "Artifact Created"}
+                                          </div>
+                                          <div className="text-xs text-slate-400">Saved to your knowledge vault</div>
+                                        </div>
+                                      </div>
+                                      <div className="flex gap-2">
+                                        <button className="flex-1 py-2 bg-purple-500/20 hover:bg-purple-500/30 border border-purple-500/50 rounded-lg text-sm transition-all">
+                                          View Artifact
+                                        </button>
+                                        <button className="flex-1 py-2 bg-cyan-500/20 hover:bg-cyan-500/30 border border-cyan-500/50 rounded-lg text-sm transition-all">
+                                          Share
+                                        </button>
                                       </div>
                                     </div>
-                                    <div className="flex gap-2">
-                                      <button className="flex-1 py-2 bg-purple-500/20 hover:bg-purple-500/30 border border-purple-500/50 rounded-lg text-sm transition-all">
-                                        View Artifact
-                                      </button>
-                                      <button className="flex-1 py-2 bg-cyan-500/20 hover:bg-cyan-500/30 border border-cyan-500/50 rounded-lg text-sm transition-all">
-                                        Share
-                                      </button>
-                                    </div>
-                                  </div>
+                                  )}
                                 </div>
                               ) : null}
 

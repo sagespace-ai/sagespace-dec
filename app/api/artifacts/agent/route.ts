@@ -1,8 +1,7 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { createClient } from "@/lib/supabase/server"
-import { nanoid } from "nanoid"
 import { z } from "zod"
-import type { ArtifactDraft } from "@/lib/types/agent"
+import { createAgentArtifact } from "@/lib/artifacts-agent"
 
 const agentArtifactSchema = z.object({
   conversationId: z.string().optional(),
@@ -40,27 +39,21 @@ export async function POST(request: NextRequest) {
 
     const { conversationId, sageId, artifact } = parsed.data
 
-    // Create artifact
-    const artifactId = `artifact-${nanoid()}`
-    const artifactData = {
-      id: artifactId,
+    // Create artifact using server-side function
+    const result = await createAgentArtifact({
       userId: user.id,
+      conversationId,
       sageId,
-      conversationId: conversationId || null,
-      name: artifact.name,
-      type: artifact.type,
-      content: artifact.content || null,
-      description: artifact.description,
-      metadata: artifact.metadata || {},
-      createdAt: new Date().toISOString(),
-    }
+      artifact,
+    })
 
-    // TODO: Store in database when schema is ready
-    console.log("[artifacts/agent] Created artifact:", artifactData)
+    if (!result.ok) {
+      return NextResponse.json({ ok: false, error: result.error }, { status: 500 })
+    }
 
     return NextResponse.json({
       ok: true,
-      data: artifactData,
+      data: result.data,
     })
   } catch (error) {
     console.error("[artifacts/agent] Error:", error)
