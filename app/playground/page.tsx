@@ -33,6 +33,7 @@ import {
 } from "@/lib/playground/multimodal"
 import { CodeEditorModal } from "@/components/playground/CodeEditorModal"
 import { QuestCreatorModal } from "@/components/playground/QuestCreatorModal"
+import { ToastContainer, useToast } from "@/components/ui/toast"
 
 type MessageType = "text" | "image" | "video" | "audio" | "code" | "artifact" | "quest"
 
@@ -101,6 +102,9 @@ export default function PlaygroundPage() {
   })
 
   const [sageMode, setSageMode] = useState<SageMode>("single")
+
+  // Toast notifications
+  const { toasts, showSuccess, showError, showInfo, dismissToast } = useToast()
 
   // Multimodal state
   const [showCodeEditor, setShowCodeEditor] = useState(false)
@@ -310,10 +314,13 @@ export default function PlaygroundPage() {
           // Store image URL for preview and attachment
           setPendingImageUrl(result.url)
           setInput((prev) => `${prev} [Image: ${file.name}]`.trim())
+          showSuccess(`Image "${file.name}" ready to send`, 3000)
           console.log("[playground] Image uploaded:", result.url)
         } catch (error) {
           console.error("[playground] Image upload failed:", error)
-          setError("Failed to upload image. Please try again.")
+          const errorMsg = "Failed to upload image. Please try again."
+          setError(errorMsg)
+          showError(errorMsg)
         } finally {
           setPendingImage(null)
         }
@@ -338,6 +345,7 @@ export default function PlaygroundPage() {
   const handleCodeSave = (code: string, language: string) => {
     setPendingCode({ code, language })
     setInput((prev) => `${prev}\n\`\`\`${language}\n${code}\n\`\`\``.trim())
+    showSuccess(`${language.toUpperCase()} code ready to send`, 3000)
     console.log("[playground] Code saved:", { code, language })
   }
 
@@ -350,10 +358,13 @@ export default function PlaygroundPage() {
     try {
       const questId = await createQuest(quest)
       setInput((prev) => `${prev} [Quest: ${quest.title}]`.trim())
+      showSuccess(`Quest "${quest.title}" created!`, 3000)
       console.log("[playground] Quest created:", questId)
     } catch (error) {
       console.error("[playground] Quest creation failed:", error)
-      setError("Failed to create quest. Please try again.")
+      const errorMsg = "Failed to create quest. Please try again."
+      setError(errorMsg)
+      showError(errorMsg)
     }
   }
 
@@ -365,6 +376,7 @@ export default function PlaygroundPage() {
           const result = await stopAudioRecording(audioRecorderRef.current, audioStreamRef.current)
           setPendingAudioUrl(result.url)
           setInput((prev) => `${prev} [Audio recorded]`.trim())
+          showSuccess("Audio recorded and ready to send", 3000)
           console.log("[playground] Audio recorded:", result.url)
         } catch (error) {
           console.error("[playground] Audio recording failed:", error)
@@ -383,6 +395,7 @@ export default function PlaygroundPage() {
         audioStreamRef.current = stream
         recorder.start()
         setIsRecordingAudio(true)
+        showInfo("Recording started... Click again to stop", 2000)
       } catch (error) {
         console.error("[playground] Failed to start recording:", error)
         setError(error instanceof Error ? error.message : "Failed to start audio recording.")
@@ -570,10 +583,14 @@ export default function PlaygroundPage() {
       if (createdArtifacts.length > 0 || createdQuests.length > 0) {
         const notifications = []
         if (createdArtifacts.length > 0) {
-          notifications.push(`${createdArtifacts.length} artifact${createdArtifacts.length > 1 ? "s" : ""} created`)
+          const msg = `${createdArtifacts.length} artifact${createdArtifacts.length > 1 ? "s" : ""} created by ${selectedSage}!`
+          notifications.push(msg)
+          showSuccess(msg, 5000)
         }
         if (createdQuests.length > 0) {
-          notifications.push(`${createdQuests.length} quest${createdQuests.length > 1 ? "s" : ""} created`)
+          const msg = `${createdQuests.length} quest${createdQuests.length > 1 ? "s" : ""} created by ${selectedSage}!`
+          notifications.push(msg)
+          showSuccess(msg, 5000)
         }
         console.log("[playground] Agent created:", notifications.join(", "))
       }
@@ -593,7 +610,9 @@ export default function PlaygroundPage() {
       }
     } catch (error) {
       console.error("Chat error:", error)
-      setError("Network error. Please check your connection and try again.")
+      const errorMsg = "Network error. Please check your connection and try again."
+      setError(errorMsg)
+      showError(errorMsg)
       // Remove the user message we optimistically added
       setMessages((prev) => prev.slice(0, -1))
     } finally {
@@ -906,24 +925,52 @@ export default function PlaygroundPage() {
                               ) : msg.type === "quest" ? (
                                 <div className="space-y-3">
                                   <p className="text-sm leading-relaxed mb-3">{msg.content}</p>
-                                  <div className="bg-gradient-to-br from-yellow-500/10 to-orange-500/10 border-2 border-yellow-500/30 rounded-xl p-4">
-                                    <div className="flex items-start justify-between mb-3">
-                                      <div>
-                                        <div className="text-lg font-bold text-yellow-400 mb-1">
-                                          🎯 {msg.metadata?.questTitle || "New Quest Unlocked!"}
+                                  {msg.metadata?.quests && Array.isArray(msg.metadata.quests) ? (
+                                    // Multiple quests created
+                                    <div className="space-y-2">
+                                      {msg.metadata.quests.map((quest: { id: string; title: string; rewardXp?: number }) => (
+                                        <div
+                                          key={quest.id}
+                                          className="bg-gradient-to-br from-yellow-500/10 to-orange-500/10 border-2 border-yellow-500/30 rounded-xl p-4"
+                                        >
+                                          <div className="flex items-start justify-between mb-3">
+                                            <div>
+                                              <div className="text-lg font-bold text-yellow-400 mb-1">
+                                                🎯 {quest.title}
+                                              </div>
+                                              <div className="text-xs text-slate-400">Quest created by {selectedSage}</div>
+                                            </div>
+                                            <div className="text-sm font-bold text-yellow-400">
+                                              +{quest.rewardXp || 100} XP
+                                            </div>
+                                          </div>
+                                          <button className="w-full py-2 bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-400 hover:to-orange-400 rounded-lg font-semibold text-sm transition-all duration-300 hover:scale-105">
+                                            Accept Quest
+                                          </button>
                                         </div>
-                                        <div className="text-xs text-slate-400">
-                                          Difficulty: {msg.metadata?.difficulty || "Medium"}
-                                        </div>
-                                      </div>
-                                      <div className="text-sm font-bold text-yellow-400">
-                                        {msg.metadata?.reward || "+50 XP"}
-                                      </div>
+                                      ))}
                                     </div>
-                                    <button className="w-full py-2 bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-400 hover:to-orange-400 rounded-lg font-semibold text-sm transition-all duration-300 hover:scale-105">
-                                      Accept Quest
-                                    </button>
-                                  </div>
+                                  ) : (
+                                    // Single quest (fallback)
+                                    <div className="bg-gradient-to-br from-yellow-500/10 to-orange-500/10 border-2 border-yellow-500/30 rounded-xl p-4">
+                                      <div className="flex items-start justify-between mb-3">
+                                        <div>
+                                          <div className="text-lg font-bold text-yellow-400 mb-1">
+                                            🎯 {msg.metadata?.questTitle || "New Quest Unlocked!"}
+                                          </div>
+                                          <div className="text-xs text-slate-400">
+                                            Difficulty: {msg.metadata?.difficulty || "Medium"}
+                                          </div>
+                                        </div>
+                                        <div className="text-sm font-bold text-yellow-400">
+                                          {msg.metadata?.reward || "+50 XP"}
+                                        </div>
+                                      </div>
+                                      <button className="w-full py-2 bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-400 hover:to-orange-400 rounded-lg font-semibold text-sm transition-all duration-300 hover:scale-105">
+                                        Accept Quest
+                                      </button>
+                                    </div>
+                                  )}
                                 </div>
                               ) : msg.type === "artifact" ? (
                                 <div className="space-y-3">
