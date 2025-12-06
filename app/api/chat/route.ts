@@ -56,8 +56,8 @@ export async function POST(request: NextRequest) {
     let conversation
     if (conversationId) {
       try {
-        conversation = await getConversation(conversationId, userId)
-        if (!conversation) {
+      conversation = await getConversation(conversationId, userId)
+      if (!conversation) {
           // Conversation doesn't exist, create a new one instead of failing
           console.warn(`[chat] Conversation ${conversationId} not found for user ${userId}, creating new one`)
           conversation = await createConversation(userId, personaId)

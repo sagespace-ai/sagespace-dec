@@ -112,13 +112,13 @@ export async function POST(request: NextRequest) {
             const tokensIn = chatCompletion.usage?.prompt_tokens || 0
             const tokensOut = chatCompletion.usage?.completion_tokens || 0
 
-            return {
-              role: "sage" as const,
-              name: persona.name,
-              content: response,
-              tokensIn,
-              tokensOut,
-            }
+          return {
+            role: "sage" as const,
+            name: persona.name,
+            content: response,
+            tokensIn,
+            tokensOut,
+          }
           } else {
             // Fallback for unexpected format
             return {
@@ -165,48 +165,48 @@ export async function POST(request: NextRequest) {
       totalTokensIn += chatCompletion.usage?.prompt_tokens || 0
       totalTokensOut += chatCompletion.usage?.completion_tokens || 0
 
-      // Save council response
-      await addMessage(conv.id, "assistant", finalAnswer, {
-        name: "Council Synthesis",
-        tokensIn: totalTokensIn,
-        tokensOut: totalTokensOut,
-      })
+    // Save council response
+    await addMessage(conv.id, "assistant", finalAnswer, {
+      name: "Council Synthesis",
+      tokensIn: totalTokensIn,
+      tokensOut: totalTokensOut,
+    })
 
-      // Calculate and debit credits
-      const totalTokens = totalTokensIn + totalTokensOut
-      const creditsRequired = tokensToCredits(totalTokens)
-      const debitResult = await debitCredits(session.user.id, creditsRequired, "council", {
+    // Calculate and debit credits
+    const totalTokens = totalTokensIn + totalTokensOut
+    const creditsRequired = tokensToCredits(totalTokens)
+    const debitResult = await debitCredits(session.user.id, creditsRequired, "council", {
+      conversationId: conv.id,
+      tokens: totalTokens,
+      personas: personas.length,
+    })
+
+    if (!debitResult.success) {
+      return NextResponse.json({ ok: false, error: debitResult.error }, { status: 402 })
+    }
+
+    // Award XP and badge
+    await awardXP(session.user.id, "council_complete")
+    await awardBadge(session.user.id, "council_complete")
+
+    // Log event
+    await logEvent({
+      type: "council_complete",
+      userId: session.user.id,
+      timestamp: Date.now(),
+      props: { personas: personas.length, rounds, tokens: totalTokens },
+    })
+
+    return NextResponse.json({
+      ok: true,
+      data: {
         conversationId: conv.id,
-        tokens: totalTokens,
-        personas: personas.length,
-      })
-
-      if (!debitResult.success) {
-        return NextResponse.json({ ok: false, error: debitResult.error }, { status: 402 })
-      }
-
-      // Award XP and badge
-      await awardXP(session.user.id, "council_complete")
-      await awardBadge(session.user.id, "council_complete")
-
-      // Log event
-      await logEvent({
-        type: "council_complete",
-        userId: session.user.id,
-        timestamp: Date.now(),
-        props: { personas: personas.length, rounds, tokens: totalTokens },
-      })
-
-      return NextResponse.json({
-        ok: true,
-        data: {
-          conversationId: conv.id,
-          transcript,
-          final: finalAnswer,
-          tokens: { input: totalTokensIn, output: totalTokensOut },
-          creditsCharged: creditsRequired,
-        },
-      })
+        transcript,
+        final: finalAnswer,
+        tokens: { input: totalTokensIn, output: totalTokensOut },
+        creditsCharged: creditsRequired,
+      },
+    })
     } else {
       return NextResponse.json({ ok: false, error: "Unexpected response format" }, { status: 500 })
     }

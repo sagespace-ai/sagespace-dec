@@ -199,23 +199,23 @@ export default function ChatSessionPage() {
 
                 {/* Sage info */}
                 {primarySage && (
-                  <div className="flex items-center gap-3">
+                <div className="flex items-center gap-3">
                     <div className="text-3xl">{primarySage.avatar}</div>
-                    <div>
-                      <h3 className="font-bold text-white flex items-center gap-2">
-                        {primarySage.name}
-                        {participants.length > 1 && (
-                          <span className="text-xs px-2 py-1 bg-purple-500/30 border border-purple-500/50 rounded">
-                            +{participants.length - 1} more
-                          </span>
-                        )}
-                      </h3>
-                      <div className="flex items-center gap-2 text-xs text-slate-300">
-                        <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
-                        <span>Online & Ready • {primarySage.domain}</span>
-                      </div>
+                  <div>
+                    <h3 className="font-bold text-white flex items-center gap-2">
+                      {primarySage.name}
+                      {participants.length > 1 && (
+                        <span className="text-xs px-2 py-1 bg-purple-500/30 border border-purple-500/50 rounded">
+                          +{participants.length - 1} more
+                        </span>
+                      )}
+                    </h3>
+                    <div className="flex items-center gap-2 text-xs text-slate-300">
+                      <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
+                      <span>Online & Ready • {primarySage.domain}</span>
                     </div>
                   </div>
+                </div>
                 )}
               </div>
 
@@ -322,7 +322,7 @@ export default function ChatSessionPage() {
                   {loading && (
                     <div className="flex justify-start animate-pulse">
                       <div className="max-w-[85%] p-4 rounded-2xl bg-gradient-to-r from-purple-500/20 to-pink-500/20 border border-purple-500/30 backdrop-blur-sm">
-                          <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2">
                             {primarySageId && (() => {
                               const sage = SAGE_TEMPLATES.find((s) => s.id === primarySageId)
                               return sage ? <div className="text-2xl">{sage.avatar}</div> : null
