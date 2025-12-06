@@ -1040,8 +1040,25 @@ export default function PlaygroundPage() {
                                           {msg.metadata?.reward || "+50 XP"}
                                         </div>
                                       </div>
-                                      <button className="w-full py-2 bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-400 hover:to-orange-400 rounded-lg font-semibold text-sm transition-all duration-300 hover:scale-105">
-                                        Accept Quest
+                                      <button
+                                        onClick={() => {
+                                          // Extract quest info from metadata
+                                          const questId = msg.metadata?.questId || `quest-${Date.now()}`
+                                          const questTitle = (msg.metadata?.questTitle as string) || "Quest"
+                                          // Parse reward XP from string like "+50 XP" or number
+                                          let rewardXp = 100
+                                          if (typeof msg.metadata?.reward === "string") {
+                                            const match = msg.metadata.reward.match(/\d+/)
+                                            rewardXp = match ? parseInt(match[0]) : 100
+                                          } else if (typeof msg.metadata?.reward === "number") {
+                                            rewardXp = msg.metadata.reward
+                                          }
+                                          handleAcceptQuest(questId, questTitle, rewardXp)
+                                        }}
+                                        className="w-full py-2 bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-400 hover:to-orange-400 rounded-lg font-semibold text-sm transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+                                        disabled={msg.metadata?.status === "accepted"}
+                                      >
+                                        {msg.metadata?.status === "accepted" ? "✓ Quest Accepted" : "Accept Quest"}
                                       </button>
                                     </div>
                                   )}
