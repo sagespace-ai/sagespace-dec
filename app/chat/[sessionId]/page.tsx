@@ -8,6 +8,9 @@ import { Card } from "@/components/ui/card"
 import { ContentBlockRenderer } from "@/components/chat/ContentBlockRenderer"
 import type { ChatMessage, ChatStats, ContentBlock } from "@/types/chat"
 import type { ChatSession, ChatParticipant } from "@/types/sage"
+import { SAGE_TEMPLATES } from "@/lib/sage-templates"
+import { getPersonalizedStarterConversations } from "@/lib/personalization"
+import type { StarterConversation } from "@/lib/sage-templates"
 import {
   SendIcon,
   ZapIcon,
@@ -37,12 +40,36 @@ export default function ChatSessionPage() {
   const [selectedHints, setSelectedHints] = useState<string[]>(["text"])
   const [session, setSession] = useState<ChatSession | null>(null)
   const [participants, setParticipants] = useState<ChatParticipant[]>([])
+  const [primarySageId, setPrimarySageId] = useState<string | null>(null)
+  const [starterConversations, setStarterConversations] = useState<StarterConversation[]>([])
 
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     fetchMessages()
+    fetchSession()
   }, [sessionId])
+
+  const fetchSession = async () => {
+    try {
+      const response = await fetch(`/api/chat/sessions?sessionId=${sessionId}`)
+      const data = await response.json()
+      if (data.session) {
+        setSession(data.session)
+        const sageId = data.session.primarySageId
+        setPrimarySageId(sageId)
+        
+        // Get starter conversations for the primary Sage
+        const sage = SAGE_TEMPLATES.find((s) => s.id === sageId)
+        if (sage) {
+          const starters = getPersonalizedStarterConversations(sage, null, messages, 5)
+          setStarterConversations(starters)
+        }
+      }
+    } catch (error) {
+      console.error("[chat] Failed to fetch session:", error)
+    }
+  }
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
@@ -81,8 +108,9 @@ export default function ChatSessionPage() {
     }
   }
 
-  const sendMessage = async () => {
-    if (!input.trim() || loading) return
+  const sendMessage = async (customContent?: string) => {
+    const messageContent = customContent || input
+    if (!messageContent.trim() || loading) return
 
     setLoading(true)
 
@@ -92,8 +120,9 @@ export default function ChatSessionPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           sessionId,
-          content: input,
+          content: messageContent,
           mode: session?.mode || "single",
+          sageId: primarySageId || undefined,
           generationHints: {
             preferredBlocks: selectedHints,
             mood: null,
@@ -116,16 +145,17 @@ export default function ChatSessionPage() {
     }
   }
 
+  const handleSendClick = () => {
+    sendMessage()
+  }
+
   const toggleHint = (hint: string) => {
     if (hint === "text") return // Text is always included
     setSelectedHints((prev) => (prev.includes(hint) ? prev.filter((h) => h !== hint) : [...prev, hint]))
   }
 
-  const primarySage = participants.find((p) => p.role === "sage") || {
-    name: "AI Sage",
-    emoji: "🤖",
-    domain: "General",
-  }
+  // Get primary Sage from template (fallback for display)
+  const primarySage = primarySageId ? SAGE_TEMPLATES.find((s) => s.id === primarySageId) : null
 
   return (
     <div className="min-h-screen bg-black">
@@ -167,23 +197,25 @@ export default function ChatSessionPage() {
                 <div className="h-6 w-px bg-white/10" />
 
                 {/* Sage info */}
-                <div className="flex items-center gap-3">
-                  <div className="text-3xl">{primarySage.emoji}</div>
-                  <div>
-                    <h3 className="font-bold text-white flex items-center gap-2">
-                      {primarySage.name}
-                      {participants.length > 1 && (
-                        <span className="text-xs px-2 py-1 bg-purple-500/30 border border-purple-500/50 rounded">
-                          +{participants.length - 1} more
-                        </span>
-                      )}
-                    </h3>
-                    <div className="flex items-center gap-2 text-xs text-slate-300">
-                      <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
-                      <span>Online & Ready • {primarySage.domain}</span>
+                {primarySage && (
+                  <div className="flex items-center gap-3">
+                    <div className="text-3xl">{primarySage.avatar}</div>
+                    <div>
+                      <h3 className="font-bold text-white flex items-center gap-2">
+                        {primarySage.name}
+                        {participants.length > 1 && (
+                          <span className="text-xs px-2 py-1 bg-purple-500/30 border border-purple-500/50 rounded">
+                            +{participants.length - 1} more
+                          </span>
+                        )}
+                      </h3>
+                      <div className="flex items-center gap-2 text-xs text-slate-300">
+                        <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
+                        <span>Online & Ready • {primarySage.domain}</span>
+                      </div>
                     </div>
                   </div>
-                </div>
+                )}
               </div>
 
               {/* Stats */}
@@ -207,12 +239,44 @@ export default function ChatSessionPage() {
             {/* Messages */}
             <div className="h-[calc(100vh-300px)] overflow-y-auto p-6 space-y-4" style={{ scrollbarWidth: "thin" }}>
               {messages.length === 0 ? (
-                <div className="flex flex-col items-center justify-center h-full text-center">
-                  <div className="text-6xl mb-6 animate-bounce">{primarySage.emoji}</div>
-                  <h3 className="text-2xl font-bold text-white mb-2">Start Your Conversation</h3>
-                  <p className="text-slate-400 max-w-md">
-                    Ask anything and get multimodal responses with text, images, knowledge cards, artifacts, and more!
-                  </p>
+                <div className="flex flex-col items-center justify-center h-full text-center space-y-6">
+                  {primarySageId && (() => {
+                    const sage = SAGE_TEMPLATES.find((s) => s.id === primarySageId)
+                    if (!sage) return null
+                    return (
+                      <>
+                        <div className="text-6xl mb-6 animate-bounce">{sage.avatar}</div>
+                        <div>
+                          <h3 className="text-2xl font-bold text-white mb-2">{sage.name}</h3>
+                          <p className="text-sm text-cyan-400 mb-4">{sage.role}</p>
+                          {sage.synopsis && (
+                            <p className="text-slate-300 max-w-md mb-6">{sage.synopsis}</p>
+                          )}
+                        </div>
+                        {starterConversations.length > 0 && (
+                          <div className="w-full max-w-2xl space-y-3">
+                            <p className="text-sm font-semibold text-slate-400 uppercase tracking-wide mb-3">
+                              Try starting with:
+                            </p>
+                            {starterConversations.map((starter) => (
+                              <button
+                                key={starter.id}
+                                onClick={() => {
+                                  sendMessage(starter.prompt).catch(console.error)
+                                }}
+                                className="w-full text-left p-4 rounded-lg border-2 bg-slate-800/50 border-slate-700/50 text-slate-300 hover:bg-slate-700/50 hover:border-cyan-500/30 hover:text-white transition-all duration-200"
+                              >
+                                <div className="font-medium text-sm mb-1">{starter.title}</div>
+                                {starter.description && (
+                                  <div className="text-xs text-slate-400">{starter.description}</div>
+                                )}
+                              </button>
+                            ))}
+                          </div>
+                        )}
+                      </>
+                    )
+                  })()}
                 </div>
               ) : (
                 <>
@@ -230,9 +294,10 @@ export default function ChatSessionPage() {
                         } backdrop-blur-sm shadow-lg`}
                       >
                         <div className="flex items-start gap-3">
-                          {msg.authorType === "sage" && (
-                            <div className="text-2xl flex-shrink-0">{primarySage.emoji}</div>
-                          )}
+                          {msg.authorType === "sage" && primarySageId && (() => {
+                            const sage = SAGE_TEMPLATES.find((s) => s.id === primarySageId)
+                            return sage ? <div className="text-2xl flex-shrink-0">{sage.avatar}</div> : null
+                          })()}
                           <div className="flex-1">
                             {/* Render all content blocks */}
                             <div className="space-y-2">
@@ -256,8 +321,11 @@ export default function ChatSessionPage() {
                   {loading && (
                     <div className="flex justify-start animate-pulse">
                       <div className="max-w-[85%] p-4 rounded-2xl bg-gradient-to-r from-purple-500/20 to-pink-500/20 border border-purple-500/30 backdrop-blur-sm">
-                        <div className="flex items-center gap-2">
-                          <div className="text-2xl">{primarySage.emoji}</div>
+                          <div className="flex items-center gap-2">
+                            {primarySageId && (() => {
+                              const sage = SAGE_TEMPLATES.find((s) => s.id === primarySageId)
+                              return sage ? <div className="text-2xl">{sage.avatar}</div> : null
+                            })()}
                           <div className="flex gap-1">
                             <div className="w-2 h-2 bg-purple-400 rounded-full animate-bounce" />
                             <div
@@ -312,7 +380,7 @@ export default function ChatSessionPage() {
                   disabled={loading}
                 />
                 <Button
-                  onClick={sendMessage}
+                  onClick={handleSendClick}
                   disabled={loading || !input.trim()}
                   className="bg-gradient-to-r from-cyan-500 to-purple-500 hover:from-cyan-400 hover:to-purple-400 border-0 shadow-lg shadow-purple-500/50 px-6 rounded-xl transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:hover:scale-100"
                 >

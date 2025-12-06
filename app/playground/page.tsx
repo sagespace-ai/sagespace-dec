@@ -287,7 +287,7 @@ export default function PlaygroundPage() {
       const data = await response.json()
 
       // Enhanced message handling with multimodal content detection
-      const assistantContent = data.message || data.response || "I'm here to help! How can I assist you today?"
+      const assistantContent = data.data?.assistantMessage || data.message || data.response || "I'm here to help! How can I assist you today?"
       const messageData: Message = {
         role: "assistant",
         content: assistantContent,

@@ -3,6 +3,50 @@ import { createClient } from "@/lib/supabase/server"
 import { nanoid } from "nanoid"
 import type { ChatSession, ChatParticipant, SageMode } from "@/types/sage"
 
+export async function GET(request: NextRequest) {
+  try {
+    const supabase = await createClient()
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
+
+    if (!user?.id) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    }
+
+    const { searchParams } = new URL(request.url)
+    const sessionId = searchParams.get("sessionId")
+
+    if (!sessionId) {
+      return NextResponse.json({ error: "Session ID required" }, { status: 400 })
+    }
+
+    const { data: session, error } = await supabase
+      .from("chat_sessions")
+      .select("*")
+      .eq("id", sessionId)
+      .eq("user_id", user.id)
+      .single()
+
+    if (error || !session) {
+      return NextResponse.json({ error: "Session not found" }, { status: 404 })
+    }
+
+    return NextResponse.json({
+      session: {
+        id: session.id,
+        mode: session.mode,
+        primarySageId: session.primary_sage_id,
+        sageIds: session.sage_ids || [],
+        createdAt: session.created_at,
+      },
+    })
+  } catch (error) {
+    console.error("[chat/sessions] GET error:", error)
+    return NextResponse.json({ error: "Failed to fetch session" }, { status: 500 })
+  }
+}
+
 export async function POST(request: NextRequest) {
   try {
     const supabase = await createClient()

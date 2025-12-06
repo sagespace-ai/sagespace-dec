@@ -3,6 +3,9 @@ import { createClient } from "@/lib/supabase/server"
 import { nanoid } from "nanoid"
 import type { ChatMessage, ContentBlock, ChatStats } from "@/types/chat"
 import type { SageMode } from "@/types/sage"
+import { generateChatCompletion } from "@/lib/llm"
+import { SAGE_TEMPLATES } from "@/lib/sage-templates"
+import type { ChatMessage as LLMChatMessage } from "@/types"
 
 function generateContentBlocks(
   userMessage: string,
@@ -80,7 +83,47 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json()
-    const { sessionId, content, mode, generationHints } = body
+    const { sessionId, content, mode, generationHints, sageId } = body
+
+    // Get session to find primarySageId if not provided
+    let primarySageId = sageId
+    if (!primarySageId) {
+      const { data: session } = await supabase
+        .from("chat_sessions")
+        .select("primary_sage_id")
+        .eq("id", sessionId)
+        .single()
+      primarySageId = session?.primary_sage_id || "health-1" // Default to Wellness Coach
+    }
+
+    // Get Sage template for system prompt
+    const sageTemplate = SAGE_TEMPLATES.find((s) => s.id === primarySageId)
+    const systemPrompt = sageTemplate
+      ? `You are ${sageTemplate.name}, a ${sageTemplate.role}. ${sageTemplate.description}. Your capabilities include: ${sageTemplate.capabilities.join(", ")}. Be helpful, conversational, and true to your character.`
+      : "You are a helpful AI assistant."
+
+    // Get previous messages for context
+    const { data: previousMessages } = await supabase
+      .from("chat_messages")
+      .select("*")
+      .eq("session_id", sessionId)
+      .order("created_at", { ascending: true })
+      .limit(20)
+
+    // Build messages array for LLM
+    const llmMessages: LLMChatMessage[] = [
+      { role: "system", content: systemPrompt },
+      ...(previousMessages || [])
+        .filter((m) => m.author_type === "user" || m.author_type === "sage")
+        .map((m) => {
+          const textContent = m.blocks?.find((b: ContentBlock) => b.type === "text")?.text || ""
+          return {
+            role: m.author_type === "user" ? "user" : "assistant",
+            content: textContent,
+          } as LLMChatMessage
+        }),
+      { role: "user", content },
+    ]
 
     const userMessage: ChatMessage = {
       id: nanoid(),
@@ -109,13 +152,47 @@ export async function POST(request: NextRequest) {
       blocks: userMessage.blocks,
     })
 
-    const sageBlocks = generateContentBlocks(content, generationHints || {}, mode)
+    // Call LLM to generate response
+    let assistantResponse = ""
+    try {
+      const completion = await generateChatCompletion(llmMessages, {
+        stream: false,
+      })
+
+      if ("choices" in completion && Array.isArray(completion.choices)) {
+        assistantResponse = completion.choices[0]?.message?.content || ""
+      } else {
+        assistantResponse = "I apologize, but I'm having trouble generating a response right now."
+      }
+    } catch (error) {
+      console.error("[chat/messages] LLM error:", error)
+      assistantResponse = "I encountered an error. Please try again."
+    }
+
+    // Create sage message with LLM response
+    const sageBlocks: ContentBlock[] = [
+      {
+        id: nanoid(),
+        type: "text",
+        text: assistantResponse,
+      },
+    ]
+
+    // Optionally add other blocks based on hints (keep existing logic for artifacts, etc.)
+    if (generationHints?.preferredBlocks?.includes("image")) {
+      sageBlocks.push({
+        id: nanoid(),
+        type: "image",
+        url: `/placeholder.svg?height=400&width=600&query=${encodeURIComponent(content)}`,
+        alt: "Generated visualization",
+      })
+    }
 
     const sageMessage: ChatMessage = {
       id: nanoid(),
       sessionId,
       authorType: "sage",
-      authorId: "sage-1",
+      authorId: primarySageId,
       createdAt: new Date().toISOString(),
       modeAtTime: mode,
       blocks: sageBlocks,
@@ -126,7 +203,7 @@ export async function POST(request: NextRequest) {
       id: sageMessage.id,
       session_id: sessionId,
       author_type: "sage",
-      author_id: "sage-1",
+      author_id: primarySageId,
       created_at: sageMessage.createdAt,
       mode_at_time: mode,
       blocks: sageMessage.blocks,

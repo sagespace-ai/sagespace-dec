@@ -1,3 +1,11 @@
+export interface StarterConversation {
+  id: string
+  title: string // short label shown in UI
+  prompt: string // actual text sent as the user's first message
+  description?: string // optional subtext
+  tags?: string[] // e.g. ['wellness', 'work', 'fun']
+}
+
 export interface SageTemplate {
   id: string
   name: string
@@ -6,6 +14,8 @@ export interface SageTemplate {
   avatar: string
   description: string
   capabilities: string[]
+  synopsis?: string // 1-2 sentence warm description
+  starterConversations?: StarterConversation[] // turn-key conversation starters
 }
 
 export const SAGE_DOMAINS = [
@@ -31,6 +41,39 @@ export const SAGE_TEMPLATES: SageTemplate[] = [
     avatar: "🧘",
     description: "Guides balanced lifestyle choices",
     capabilities: ["Nutrition Planning", "Exercise Routines", "Stress Management"],
+    synopsis: "A calm, practical guide who helps you manage stress, routines, and emotional balance in a realistic way.",
+    starterConversations: [
+      {
+        id: "overwhelmed-work",
+        title: "I'm overwhelmed with my work",
+        prompt: "I'm feeling overwhelmed with my current workload. Can you help me untangle everything and make a simple plan?",
+        tags: ["stress", "work"],
+      },
+      {
+        id: "sleep-routine",
+        title: "Fix my sleep routine",
+        prompt: "My sleep schedule is a mess. Can you help me design a realistic routine that I can actually follow?",
+        tags: ["sleep", "habit"],
+      },
+      {
+        id: "just-chat",
+        title: "Let's just talk",
+        prompt: "I'm not sure what I need, but I'd like to talk a bit and see what comes up.",
+        tags: ["explore"],
+      },
+      {
+        id: "energy-levels",
+        title: "I'm always tired",
+        prompt: "I feel drained most days. What could be causing this and how can I boost my energy naturally?",
+        tags: ["energy", "health"],
+      },
+      {
+        id: "work-life-balance",
+        title: "Find work-life balance",
+        prompt: "I'm struggling to balance my work responsibilities with my personal life. Can you help me create boundaries?",
+        tags: ["balance", "work"],
+      },
+    ],
   },
   {
     id: "health-2",
@@ -40,6 +83,33 @@ export const SAGE_TEMPLATES: SageTemplate[] = [
     avatar: "💆",
     description: "Supports mental wellbeing",
     capabilities: ["Mindfulness", "Coping Strategies", "Emotional Intelligence"],
+    synopsis: "A compassionate companion who helps you navigate emotions, build resilience, and find inner peace.",
+    starterConversations: [
+      {
+        id: "anxiety-help",
+        title: "I'm feeling anxious",
+        prompt: "I've been feeling really anxious lately. Can you help me understand what might be triggering this and how to cope?",
+        tags: ["anxiety", "emotions"],
+      },
+      {
+        id: "mood-swings",
+        title: "My mood keeps changing",
+        prompt: "I notice my mood swings a lot throughout the day. Is this normal and how can I stabilize it?",
+        tags: ["mood", "emotions"],
+      },
+      {
+        id: "self-care",
+        title: "I need self-care ideas",
+        prompt: "I know I should practice self-care but I don't know where to start. Can you suggest some simple, realistic practices?",
+        tags: ["self-care", "wellness"],
+      },
+      {
+        id: "stress-management",
+        title: "Help me manage stress",
+        prompt: "I'm dealing with a lot of stress right now. What are some effective ways to manage it without making big life changes?",
+        tags: ["stress", "coping"],
+      },
+    ],
   },
   {
     id: "health-3",
@@ -49,6 +119,33 @@ export const SAGE_TEMPLATES: SageTemplate[] = [
     avatar: "💪",
     description: "Optimizes physical fitness",
     capabilities: ["Workout Plans", "Form Correction", "Progress Tracking"],
+    synopsis: "An energetic motivator who designs personalized workouts and helps you build strength, endurance, and confidence.",
+    starterConversations: [
+      {
+        id: "beginner-workout",
+        title: "I'm new to fitness",
+        prompt: "I want to start working out but I'm a complete beginner. Can you help me create a simple, sustainable routine?",
+        tags: ["beginner", "workout"],
+      },
+      {
+        id: "home-workout",
+        title: "Workout at home",
+        prompt: "I don't have access to a gym. Can you design a home workout routine that's effective and doesn't require equipment?",
+        tags: ["home", "workout"],
+      },
+      {
+        id: "motivation",
+        title: "I keep losing motivation",
+        prompt: "I start working out but then lose motivation after a few weeks. How can I stay consistent?",
+        tags: ["motivation", "consistency"],
+      },
+      {
+        id: "injury-recovery",
+        title: "Recovering from injury",
+        prompt: "I'm recovering from an injury and want to get back into exercise safely. What should I do?",
+        tags: ["injury", "recovery"],
+      },
+    ],
   },
   {
     id: "health-4",
@@ -304,6 +401,27 @@ export const SAGE_TEMPLATES: SageTemplate[] = [
     avatar: "🔢",
     description: "Makes math concepts clear",
     capabilities: ["Problem Solving", "Concept Explanation", "Practice Problems"],
+    synopsis: "A patient teacher who breaks down complex math problems into simple steps and helps you build confidence.",
+    starterConversations: [
+      {
+        id: "struggling-with-math",
+        title: "I'm struggling with math",
+        prompt: "I'm having trouble understanding a math concept. Can you explain it in a simple way and help me practice?",
+        tags: ["learning", "math"],
+      },
+      {
+        id: "test-prep",
+        title: "Help me prepare for a test",
+        prompt: "I have a math test coming up. Can you help me review the key concepts and practice problems?",
+        tags: ["test", "preparation"],
+      },
+      {
+        id: "homework-help",
+        title: "I'm stuck on homework",
+        prompt: "I'm stuck on a homework problem. Can you guide me through solving it step by step?",
+        tags: ["homework", "help"],
+      },
+    ],
   },
   {
     id: "edu-2",
@@ -577,6 +695,27 @@ export const SAGE_TEMPLATES: SageTemplate[] = [
     avatar: "✍️",
     description: "Enhances writing skills",
     capabilities: ["Story Structure", "Style Refinement", "Publishing Guidance"],
+    synopsis: "A creative guide who helps you find your voice, craft compelling stories, and refine your writing.",
+    starterConversations: [
+      {
+        id: "writer-block",
+        title: "I have writer's block",
+        prompt: "I'm stuck and can't seem to write anything. Can you help me break through this creative block?",
+        tags: ["creativity", "writing"],
+      },
+      {
+        id: "story-ideas",
+        title: "I need story ideas",
+        prompt: "I want to write something but I don't know what. Can you help me brainstorm some story ideas?",
+        tags: ["ideas", "creativity"],
+      },
+      {
+        id: "improve-writing",
+        title: "Improve my writing",
+        prompt: "I've written something but I feel like it could be better. Can you help me refine it?",
+        tags: ["editing", "improvement"],
+      },
+    ],
   },
   {
     id: "creative-2",
