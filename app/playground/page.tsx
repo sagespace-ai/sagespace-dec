@@ -551,7 +551,19 @@ export default function PlaygroundPage() {
 
       // Check for errors
       if (!data.ok) {
-        setError(data.error || "Failed to get response from Sage")
+        const errorMsg = data.error || "Failed to get response from Sage"
+        
+        // If conversation not found, clear the stale ID and retry
+        if (errorMsg.includes("Conversation not found") && currentConversationId) {
+          console.warn("[playground] Stale conversation ID, clearing and will retry on next message")
+          setCurrentConversationId(null)
+          setError(null) // Clear error so user can retry
+          showInfo("Starting a new conversation...", 2000)
+        } else {
+          setError(errorMsg)
+          showError(errorMsg)
+        }
+        
         setLoading(false)
         // Remove the user message we optimistically added
         setMessages((prev) => prev.slice(0, -1))
