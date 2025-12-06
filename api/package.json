@@ -13,13 +13,13 @@
     "@sentry/nextjs": "^7.91.0",
     "@supabase/supabase-js": "^2.38.4",
     "next": "^14.0.4",
-    "react": "^18.2.0",
+    "react": "^19.2.1",
     "react-dom": "^18.2.0",
     "stripe": "^14.21.0"
   },
   "devDependencies": {
     "@types/node": "^20.10.5",
-    "@types/react": "^18.2.43",
+    "@types/react": "^19.2.7",
     "@types/react-dom": "^18.2.17",
     "typescript": "^5.2.2"
   }
