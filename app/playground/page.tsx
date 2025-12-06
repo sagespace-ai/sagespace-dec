@@ -54,10 +54,24 @@ interface Message {
   metadata?: MessageMetadata
 }
 
+// Map playground Sage names to actual Sage template IDs
+const SAGE_NAME_TO_ID: Record<string, string> = {
+  "Dr. Wellness": "health-1",        // Wellness Coach
+  "Prof. Einstein": "edu-1",         // Math Tutor (closest match)
+  "Chef Gourmet": "creative-1",       // Writing Mentor (closest match)
+  "Coach Alpha": "health-3",         // Fitness Trainer
+  "Sage Harmony": "creative-1",       // Writing Mentor
+  "Tech Wizard": "tech-1",            // Code Architect
+  "Money Maven": "health-1",         // Default to Wellness Coach (no business sage found)
+  "Word Smith": "creative-1",         // Writing Mentor
+}
+
 export default function PlaygroundPage() {
   const [messages, setMessages] = useState<Array<Message>>([])
   const [input, setInput] = useState("")
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [currentConversationId, setCurrentConversationId] = useState<string | null>(null)
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
   const [selectedSage, setSelectedSage] = useState("Dr. Wellness")
   const [selectedSageCircle, setSelectedSageCircle] = useState<string[]>([])
@@ -260,34 +274,61 @@ export default function PlaygroundPage() {
   }
 
   const sendMessage = async () => {
-    if (!input.trim()) return
+    if (!input.trim() || loading) return
 
     const userMessage: Message = { role: "user", content: input, timestamp: new Date(), type: "text" }
     setMessages((prev) => [...prev, userMessage])
+    const messageContent = input
     setInput("")
     setLoading(true)
+    setError(null)
 
     setStats((prev) => ({
       ...prev,
       messagesSent: prev.messagesSent + 1,
-      xpEarned: prev.xpEarned + Math.floor(Math.random() * 50 + 10),
-      tokensUsed: prev.tokensUsed + input.length,
+      tokensUsed: prev.tokensUsed + messageContent.length,
     }))
 
     try {
+      // Map Sage name to template ID
+      const personaId = SAGE_NAME_TO_ID[selectedSage] || "health-1" // Default to Wellness Coach
+
       const response = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          messages: [...messages.map((m) => ({ role: m.role, content: m.content })), userMessage],
-          agentId: selectedSage,
+          personaId,                    // ✅ Use correct field name and template ID
+          userMessage: messageContent,   // ✅ Send just the new message
+          conversationId: currentConversationId || undefined, // ✅ Track conversation
         }),
       })
 
       const data = await response.json()
 
-      // Enhanced message handling with multimodal content detection
-      const assistantContent = data.data?.assistantMessage || data.message || data.response || "I'm here to help! How can I assist you today?"
+      // Check for errors
+      if (!data.ok) {
+        setError(data.error || "Failed to get response from Sage")
+        setLoading(false)
+        // Remove the user message we optimistically added
+        setMessages((prev) => prev.slice(0, -1))
+        return
+      }
+
+      // Extract assistant message from correct response format
+      const assistantContent = data.data?.assistantMessage || ""
+      
+      if (!assistantContent) {
+        setError("Received empty response from Sage")
+        setLoading(false)
+        setMessages((prev) => prev.slice(0, -1))
+        return
+      }
+
+      // Update conversation ID if this is a new conversation
+      if (data.data?.conversationId && !currentConversationId) {
+        setCurrentConversationId(data.data.conversationId)
+      }
+
       const messageData: Message = {
         role: "assistant",
         content: assistantContent,
@@ -321,23 +362,25 @@ export default function PlaygroundPage() {
 
       setMessages((prev) => [...prev, messageData])
 
-      setStats((prev) => ({
-        ...prev,
-        xpEarned: prev.xpEarned + 5,
-      }))
+      // Update stats with actual values from API if available
+      if (data.data?.tokens) {
+        setStats((prev) => ({
+          ...prev,
+          tokensUsed: prev.tokensUsed + (data.data.tokens.input || 0) + (data.data.tokens.output || 0),
+          xpEarned: prev.xpEarned + 10, // Base XP per message
+        }))
+      } else {
+        setStats((prev) => ({
+          ...prev,
+          xpEarned: prev.xpEarned + 10,
+        }))
+      }
     } catch (error) {
       console.error("Chat error:", error)
-      setMessages((prev) => [
-        ...prev,
-        {
-          role: "assistant",
-          content: "I apologize, but I'm having trouble connecting right now. Please try again!",
-          timestamp: new Date(),
-          type: "text",
-        },
-      ])
-    } finally {
+      setError("Network error. Please check your connection and try again.")
       setLoading(false)
+      // Remove the user message we optimistically added
+      setMessages((prev) => prev.slice(0, -1))
     }
   }
 
@@ -789,10 +832,21 @@ export default function PlaygroundPage() {
                       disabled={loading || !input.trim()}
                       className="bg-gradient-to-r from-cyan-500 to-purple-500 hover:from-cyan-400 hover:to-purple-400 border-0 shadow-lg shadow-purple-500/50 px-6 rounded-xl transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:hover:scale-100"
                     >
-                      <SendIcon className="w-5 h-5" />
-                    </Button>
-                  </div>
-                  <div className="flex items-center justify-between mt-3 text-xs text-slate-400">
+                  <SendIcon className="w-5 h-5" />
+                </Button>
+              </div>
+              {error && (
+                <div className="mt-3 p-3 bg-red-500/20 border border-red-500/50 rounded-lg text-red-300 text-sm flex items-center justify-between">
+                  <span>{error}</span>
+                  <button
+                    onClick={() => setError(null)}
+                    className="ml-2 text-red-400 hover:text-red-300"
+                  >
+                    <XIcon className="w-4 h-4" />
+                  </button>
+                </div>
+              )}
+              <div className="flex items-center justify-between mt-3 text-xs text-slate-400">
                     <div>Press Enter to send • Shift+Enter for new line</div>
                     <div className="flex items-center gap-2 text-yellow-400">
                       <ZapIcon className="w-3 h-3" />

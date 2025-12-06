@@ -62,11 +62,26 @@ export async function POST(request: NextRequest) {
     }
 
     // Get persona (built-in or custom)
-    let systemPrompt = "You are a helpful AI assistant."
+    let systemPrompt = "You are a helpful AI assistant. Be conversational and helpful."
     if (personaId) {
       const persona = await getPersona(personaId, userId)
       if (persona) {
         systemPrompt = persona.systemPrompt
+        
+        // Enhance system prompt for built-in Sages with synopsis
+        if (persona.isBuiltIn) {
+          const sageTemplate = (await import("@/lib/sage-templates")).SAGE_TEMPLATES.find((s) => s.id === personaId)
+          if (sageTemplate?.synopsis) {
+            systemPrompt = `You are ${sageTemplate.name}, a ${sageTemplate.role}. ${sageTemplate.synopsis}. Your capabilities include: ${sageTemplate.capabilities.join(", ")}. 
+
+Be helpful, conversational, and true to your character. When appropriate, you can:
+- Suggest artifacts (knowledge cards, tools, resources) by mentioning them naturally
+- Create quests for actionable goals using natural language about challenges
+- Recommend visualizations when they would help explain concepts
+
+Respond naturally and conversationally, staying true to your role as ${sageTemplate.name}.`
+          }
+        }
       }
     }
 

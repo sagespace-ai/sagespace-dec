@@ -6,6 +6,7 @@ import type { SageMode } from "@/types/sage"
 import { generateChatCompletion } from "@/lib/llm"
 import { SAGE_TEMPLATES } from "@/lib/sage-templates"
 import type { ChatMessage as LLMChatMessage } from "@/types"
+import { parseLLMResponseForMultimodal } from "@/lib/llm-parser"
 
 function generateContentBlocks(
   userMessage: string,
@@ -99,8 +100,15 @@ export async function POST(request: NextRequest) {
     // Get Sage template for system prompt
     const sageTemplate = SAGE_TEMPLATES.find((s) => s.id === primarySageId)
     const systemPrompt = sageTemplate
-      ? `You are ${sageTemplate.name}, a ${sageTemplate.role}. ${sageTemplate.description}. Your capabilities include: ${sageTemplate.capabilities.join(", ")}. Be helpful, conversational, and true to your character.`
-      : "You are a helpful AI assistant."
+      ? `You are ${sageTemplate.name}, a ${sageTemplate.role}. ${sageTemplate.synopsis || sageTemplate.description}. Your capabilities include: ${sageTemplate.capabilities.join(", ")}. 
+
+Be helpful, conversational, and true to your character. When appropriate, you can:
+- Suggest artifacts (knowledge cards, tools, resources) by mentioning them naturally in conversation
+- Create quests for actionable goals by using natural language about challenges or goals
+- Recommend visualizations or images when they would help explain concepts
+
+Respond naturally and conversationally, staying true to your role as ${sageTemplate.name}.`
+      : "You are a helpful AI assistant. Be conversational and helpful."
 
     // Get previous messages for context
     const { data: previousMessages } = await supabase
@@ -169,14 +177,21 @@ export async function POST(request: NextRequest) {
       assistantResponse = "I encountered an error. Please try again."
     }
 
+    // Parse LLM response for multimodal content
+    const parsed = parseLLMResponseForMultimodal(assistantResponse)
+
     // Create sage message with LLM response
     const sageBlocks: ContentBlock[] = [
       {
         id: nanoid(),
         type: "text",
-        text: assistantResponse,
+        text: parsed.text,
       },
     ]
+
+    // Add suggested blocks from LLM response (limit to avoid overwhelming)
+    const suggestedBlocks = parsed.suggestedBlocks.slice(0, 2) // Max 2 additional blocks
+    sageBlocks.push(...suggestedBlocks)
 
     // Optionally add other blocks based on hints (keep existing logic for artifacts, etc.)
     if (generationHints?.preferredBlocks?.includes("image")) {
@@ -185,6 +200,22 @@ export async function POST(request: NextRequest) {
         type: "image",
         url: `/placeholder.svg?height=400&width=600&query=${encodeURIComponent(content)}`,
         alt: "Generated visualization",
+      })
+    }
+
+    // Add quest for habit-related queries (if not already suggested by LLM)
+    if (
+      (content.toLowerCase().includes("habit") || content.toLowerCase().includes("routine")) &&
+      !sageBlocks.some((b) => b.type === "quest")
+    ) {
+      sageBlocks.push({
+        id: nanoid(),
+        type: "quest",
+        title: "Build a Sustainable Routine",
+        description: "Complete daily actions for 7 days",
+        goal: "Develop lasting habits",
+        rewardXp: 500,
+        status: "new",
       })
     }
 
